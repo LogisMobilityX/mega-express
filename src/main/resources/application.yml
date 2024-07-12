@@ -1,0 +1,14 @@
+spring:
+  jpa:
+    database: mysql
+    hibernate.ddl-auto: create
+    show-sql: true
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/match?serverTimezone=Asia/Seoul
+    username: root
+    password: root1004
+
+logging:
+  level:
+    org.hibernate.SQL: debug
