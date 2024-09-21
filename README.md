@@ -7,16 +7,21 @@
 ### 🖥️ Frontend
 ### 🖌️ Designer
 ### 🖥️ Backend & Infra  
-- 류동재 [Github](https://github.com/ryudongjae)
-- 임동혁 [Github](https://github.com/IMDongH)
+<details>
+  <summary>🤷🏻‍♂️ 류동재</summary>  
+  
+  [Github](https://github.com/ryudongjae)
+</details>
+<details>
+  <summary>🤷🏻‍♂️ 임동혁</summary>
+  
+  [Github](https://github.com/IMDongH)
+</details>
 
+## 🗄️ Project History
 
-
-## 📜 Plan
-위키에 정리 예정
 
 ## 📜 Technical document
+
 헥사고날 아키텍처 (Hexagonal Architecture) , by 동재 [(문서)](https://github.com/F3F-T/mega-express/blob/main/document/DevelopDocument/HexagonalArchitecture.md)
 
-## ⚒️ Issue
-//Webhook test
