@@ -1,6 +1,8 @@
 package com.express.infrasturcture.aggregate;
 
-import hu.hirannor.hexagonal.infrastructure.event.DomainEvent;
+
+import com.express.infrasturcture.event.DomainEvent;
+
 import java.util.List;
 
 /**
