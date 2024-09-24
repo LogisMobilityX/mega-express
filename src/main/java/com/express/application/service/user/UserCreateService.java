@@ -1,4 +1,4 @@
 package com.express.application.service.user;
 
-public class UserServiceImpl {
+public class UserCreateService {
 }

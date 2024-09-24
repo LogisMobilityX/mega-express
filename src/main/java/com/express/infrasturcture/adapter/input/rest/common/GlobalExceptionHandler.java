@@ -1,4 +1,4 @@
-package com.express.web.common;
+package com.express.infrasturcture.adapter.input.rest.common;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

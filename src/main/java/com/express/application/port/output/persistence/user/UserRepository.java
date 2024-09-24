@@ -1,4 +1,4 @@
-package com.express.domain.repository.user;
+package com.express.application.port.output.persistence.user;
 
 import com.express.domain.model.user.User;
 import org.springframework.data.jpa.repository.JpaRepository;
