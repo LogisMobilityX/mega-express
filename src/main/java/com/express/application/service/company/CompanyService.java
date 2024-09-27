@@ -6,6 +6,7 @@ import com.express.application.port.input.company.ReadCompanyQuery;
 import com.express.application.port.input.company.RegisterCompanyCommand;
 import com.express.application.port.output.company.CompanyProcessor;
 import com.express.application.port.output.company.CompanyReader;
+import com.express.application.port.output.file.FileUploader;
 import com.express.application.port.output.messaging.MessagePublisher;
 import com.express.domain.model.company.Company;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +23,9 @@ public class CompanyService implements CompanyUseCase {
     private final CompanyReader companyReader;
     private final CompanyProcessor companyProcessor;
     private final MessagePublisher messagePublisher;
+    private final FileUploader fileUploader;
+
+
     @Override
     public Company readCompany(ReadCompanyQuery query) {
         return null;
@@ -29,6 +33,7 @@ public class CompanyService implements CompanyUseCase {
 
     @Override
     public boolean registerCompany(RegisterCompanyCommand command) {
+
         return false;
     }
 
