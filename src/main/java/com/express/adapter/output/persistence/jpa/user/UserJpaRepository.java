@@ -1,4 +1,6 @@
 package com.express.adapter.output.persistence.jpa.user;
 
-public interface UserJpaRepository {
+public class UserJpaRepository {
+
+
 }
