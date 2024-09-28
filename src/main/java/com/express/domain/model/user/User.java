@@ -1,6 +1,8 @@
 package com.express.domain.model.user;
 
 
+import com.express.infrasturcture.aggregate.AggregateRoot;
+import com.express.infrasturcture.event.DomainEvent;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -10,11 +12,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.domain.AbstractAggregateRoot;
 
+import java.util.List;
+
 
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class User {
+public class User implements AggregateRoot {
     //이메일
     private String email;
 
@@ -33,4 +37,13 @@ public class User {
     //권한 JSON
     private String userAuth;
 
+    @Override
+    public void clearEvents() {
+
+    }
+
+    @Override
+    public List<DomainEvent> listEvents() {
+        return List.of();
+    }
 }
