@@ -1,15 +1,12 @@
-package com.express.domain.event;
+package com.express.domain.model.user.event;
 
 import com.express.domain.model.user.User;
-import com.express.infrasturcture.event.EventId;
 import org.springframework.context.ApplicationEvent;
 
-import java.time.Clock;
-
-public class UserEvent extends ApplicationEvent {
+public class UserCreateEvent extends ApplicationEvent {
 
     private User user;
-    public UserEvent(Object source) {
+    public UserCreateEvent(Object source) {
         super(source);
         this.user = (User) source;
     }
