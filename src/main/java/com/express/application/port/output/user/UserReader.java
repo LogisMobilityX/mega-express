@@ -1,4 +1,4 @@
-package com.express.application.port.output.persistence.user;
+package com.express.application.port.output.user;
 
 import com.express.domain.model.user.User;
 

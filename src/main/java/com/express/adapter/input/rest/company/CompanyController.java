@@ -17,7 +17,7 @@ public class CompanyController {
 
     @PostMapping
     public ResponseEntity<CustomResponse> createCompany(@RequestBody CompanyCreateModel model){
-        companyUseCase.registerCompany(model) //model -> command mapper 추가
+        //companyUseCase.registerCompany(model) //model -> command mapper 추가
 
         return null;
     }
