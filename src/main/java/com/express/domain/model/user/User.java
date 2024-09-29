@@ -1,6 +1,7 @@
 package com.express.domain.model.user;
 
 
+import com.express.domain.model.EventModel;
 import com.express.infrasturcture.aggregate.AggregateRoot;
 import com.express.infrasturcture.event.DomainEvent;
 import jakarta.persistence.Entity;
@@ -18,7 +19,7 @@ import java.util.List;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class User implements AggregateRoot {
+public class User extends EventModel {
     //이메일
     private String email;
 
@@ -37,13 +38,4 @@ public class User implements AggregateRoot {
     //권한 JSON
     private String userAuth;
 
-    @Override
-    public void clearEvents() {
-
-    }
-
-    @Override
-    public List<DomainEvent> listEvents() {
-        return List.of();
-    }
 }

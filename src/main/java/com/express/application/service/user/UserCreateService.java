@@ -3,6 +3,7 @@ package com.express.application.service.user;
 import com.express.application.dto.user.UserInfoCreateDTO;
 import com.express.application.dto.user.UserInfoSelectDTO;
 import com.express.application.port.input.user.UserCreateUseCase;
+import com.express.domain.model.user.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
