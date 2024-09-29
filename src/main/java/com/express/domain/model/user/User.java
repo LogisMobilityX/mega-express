@@ -1,6 +1,9 @@
 package com.express.domain.model.user;
 
 
+import com.express.domain.model.EventModel;
+import com.express.infrasturcture.aggregate.AggregateRoot;
+import com.express.infrasturcture.event.DomainEvent;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -8,19 +11,15 @@ import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.domain.AbstractAggregateRoot;
 
-@Entity
+import java.util.List;
+
+
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class User {
-
-    //PK
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    //JPA 에서 기본키 값을 자동으로 생성할 때 사용하는 옵션
-    private Long id;
-
+public class User extends EventModel {
     //이메일
     private String email;
 
