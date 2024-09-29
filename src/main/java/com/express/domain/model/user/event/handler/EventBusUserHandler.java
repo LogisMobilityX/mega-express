@@ -17,6 +17,8 @@ public class EventBusUserHandler {
      * 유저 관련 이벤트를 처리
      *
      */
+
+    //save User 이후 처리 될 이벤트 
     @Async
     @TransactionalEventListener
     public void Handle(){
