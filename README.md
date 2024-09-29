@@ -4,8 +4,7 @@
 재고 관리, 발주관리 ,창고 관리, 뮬류 관리 등 물류에 필요한 모든 기능들을 한 곳에 모은 서비스 입니다.
 
 ## 🏂 Introduce team members
-### 🖥️ Frontend
-### 🖌️ Designer
+
 ### 🖥️ Backend & Infra  
 <details>
   <summary>🤷🏻‍♂️ 류동재</summary>  
@@ -18,8 +17,8 @@
   [Github](https://github.com/IMDongH)
 </details>
 
-## 🗄️ Project History
-
+## 🗄️ Project History  
+ * 이벤트 기반 구조 
 
 ## 📜 Technical document
 
