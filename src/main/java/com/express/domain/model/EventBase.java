@@ -13,7 +13,7 @@ import java.util.List;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class EventModel implements AggregateRoot {
+public class EventBase implements AggregateRoot {
     private List<DomainEvent> domainEventList;
 
     @Override

@@ -1,4 +1,4 @@
-package com.express.domain.model.user.event.publisher;
+package com.express.adapter.output.publisher;
 
 
 import com.express.application.service.messaging.MessagePublisher;
@@ -11,10 +11,10 @@ import java.util.List;
 
 @Component
 @RequiredArgsConstructor
-public class UserCreateEventPublisher implements MessagePublisher {
+public class SpringEventPublisher implements MessagePublisher {
     private final ApplicationEventPublisher applicationEventPublisher;
     @Override
     public void publish(List<? extends Message> message) {
-
+        message.forEach(applicationEventPublisher::publishEvent);
     }
 }
