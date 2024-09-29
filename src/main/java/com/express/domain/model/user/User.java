@@ -1,26 +1,17 @@
 package com.express.domain.model.user;
 
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import com.express.domain.model.EventBase;
+import com.express.domain.model.user.event.UserCreateEvent;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Entity
+
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class User {
-
-    //PK
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    //JPA 에서 기본키 값을 자동으로 생성할 때 사용하는 옵션
-    private Long id;
-
+public class User extends EventBase {
     //이메일
     private String email;
 
