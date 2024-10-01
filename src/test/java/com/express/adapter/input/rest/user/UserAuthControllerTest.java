@@ -4,23 +4,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class UserControllerTest {
-
-    @Test
-    void saveUser() {
-    }
-
-    @Test
-    void readUser() {
-    }
-
-    @Test
-    void deleteUser() {
-    }
-
-    @Test
-    void updateUser() {
-    }
+class UserAuthControllerTest {
 
     @Test
     void loginUser() {
@@ -28,5 +12,13 @@ class UserControllerTest {
 
     @Test
     void logoutUser() {
+    }
+
+    @Test
+    void addAuthorization() {
+    }
+
+    @Test
+    void deleteAuthorization() {
     }
 }

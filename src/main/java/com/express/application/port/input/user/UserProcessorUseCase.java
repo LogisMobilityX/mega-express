@@ -1,5 +1,6 @@
 package com.express.application.port.input.user;
 
+import com.express.application.port.input.user.request.CertifiedEmailRequest;
 import com.express.application.port.input.user.request.JoinUserRequest;
 import com.express.application.port.input.user.request.ModifyUserRequest;
 
@@ -14,10 +15,10 @@ public interface UserProcessorUseCase {
     //user 삭제
     String deleteUserInfo(Long userId);
 
+    String sendCertifiedEmail(String email);
 
-    Map<String,Object> login();
+    String certifiedEmail(CertifiedEmailRequest certifiedEmailRequest);
 
-    String logOut();
 }
 
 

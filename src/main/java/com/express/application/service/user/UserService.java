@@ -1,8 +1,10 @@
 package com.express.application.service.user;
 
 
+import com.express.application.port.input.user.UserAuthUseCase;
 import com.express.application.port.input.user.UserProcessorUseCase;
 import com.express.application.port.input.user.UserReadUseCase;
+import com.express.application.port.input.user.request.CertifiedEmailRequest;
 import com.express.application.port.input.user.request.JoinUserRequest;
 import com.express.application.port.input.user.request.ModifyUserRequest;
 import com.express.application.port.input.user.response.ReadUserResponse;
@@ -26,7 +28,9 @@ import java.util.Optional;
  */
 @Service
 @RequiredArgsConstructor
-public class UserService implements UserProcessorUseCase, UserReadUseCase {
+public class UserService implements UserProcessorUseCase,
+                                    UserReadUseCase,
+                                    UserAuthUseCase {
     private UserProcessor userProcessor;
     private UserReader userReader;
     private final MessagePublisher messagePublisher;
@@ -47,12 +51,12 @@ public class UserService implements UserProcessorUseCase, UserReadUseCase {
     }
 
     @Override
-    public Map<String, Object> login() {
-        return Map.of();
+    public String sendCertifiedEmail(String email) {
+        return "";
     }
 
     @Override
-    public String logOut() {
+    public String certifiedEmail(CertifiedEmailRequest certifiedEmailRequest) {
         return "";
     }
 
@@ -64,6 +68,16 @@ public class UserService implements UserProcessorUseCase, UserReadUseCase {
     @Override
     public Optional<ReadUserResponse> findById(String id) {
         return Optional.empty();
+    }
+
+    @Override
+    public Map<String, Object> login() {
+        return Map.of();
+    }
+
+    @Override
+    public String logOut() {
+        return "";
     }
     /**
      *
