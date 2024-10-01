@@ -9,6 +9,7 @@ import com.express.application.port.output.company.CompanyReader;
 import com.express.application.port.output.file.FileUploader;
 import com.express.application.port.output.messaging.MessagePublisher;
 import com.express.domain.model.company.Company;
+import com.express.domain.model.company.CompanyCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
@@ -33,7 +34,13 @@ public class CompanyService implements CompanyUseCase {
 
     @Override
     public boolean registerCompany(RegisterCompanyCommand command) {
+        Company company = Company.registerBy(command);
 
+        String filePath = fileUploader.upload(company.getBusinessNumberFile());
+        companyProcessor.register(company);
+
+        messagePublisher.publish(company.listEvents());
+        company.clearEvents();
         return false;
     }
 
@@ -41,4 +48,6 @@ public class CompanyService implements CompanyUseCase {
     public boolean modifyCompany(ModifyCompanyCommand command) {
         return false;
     }
+
+
 }
