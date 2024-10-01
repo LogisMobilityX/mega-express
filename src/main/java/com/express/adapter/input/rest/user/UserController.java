@@ -17,7 +17,7 @@ public class UserController {
 
     @PostMapping(value = "/join")
     public void saveUser(@RequestBody JoinUserRequest joinUserRequest){
-        //validate
+        //validate (유효한 전화번호, 이메일 형식, 이메일 인증 여부 )
         //가입
     }
     /**
