@@ -1,15 +1,14 @@
 package com.express.application.service.user;
 
 
-import com.express.adapter.output.persistence.jpa.user.UserPersistenceAdapter;
-import com.express.application.dto.user.UserInfoCreateDTO;
-import com.express.application.dto.user.UserInfoSelectDTO;
 import com.express.application.port.input.user.UserProcessorUseCase;
 import com.express.application.port.input.user.UserReadUseCase;
+import com.express.application.port.input.user.request.JoinUserRequest;
+import com.express.application.port.input.user.request.ModifyUserRequest;
+import com.express.application.port.input.user.response.ReadUserResponse;
 import com.express.application.port.output.user.UserProcessor;
 import com.express.application.port.output.user.UserReader;
 import com.express.application.service.messaging.MessagePublisher;
-import com.express.domain.model.user.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -31,18 +30,14 @@ public class UserService implements UserProcessorUseCase, UserReadUseCase {
     private UserProcessor userProcessor;
     private UserReader userReader;
     private final MessagePublisher messagePublisher;
-    /**
-     *
-     * @param userCreateDto
-     */
-    @Override
-    public void createUser(UserInfoCreateDTO.UserCreateDto userCreateDto) {
 
-     //   userPersistenceAdapter.saveUser();
+    @Override
+    public void createUser(JoinUserRequest joinUserRequest) {
+
     }
 
     @Override
-    public UserInfoSelectDTO.UserUpdateResponseDTO updateUserInfo(UserInfoSelectDTO.UserUpdateRequestDTO userUpdateDto) {
+    public ModifyUserRequest updateUserInfo(ModifyUserRequest userUpdateDto) {
         return null;
     }
 
@@ -62,12 +57,17 @@ public class UserService implements UserProcessorUseCase, UserReadUseCase {
     }
 
     @Override
-    public Optional<User> findByEmail(String email) {
+    public Optional<ReadUserResponse> findByEmail(String email) {
         return Optional.empty();
     }
 
     @Override
-    public Optional<User> findById(String id) {
+    public Optional<ReadUserResponse> findById(String id) {
         return Optional.empty();
     }
+    /**
+     *
+     * @param userCreateDto
+     */
+
 }

@@ -1,4 +1,4 @@
-package com.express.adapter.input.rest.common;
+package com.express.infrasturcture.common;
 
 import java.time.LocalDateTime;
 

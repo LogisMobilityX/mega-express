@@ -1,7 +1,5 @@
 package com.express.adapter.output.persistence.jpa.user;
 
-import com.express.application.dto.user.UserInfoCreateDTO;
-import com.express.application.dto.user.UserInfoUpdateDTO;
 import com.express.application.port.output.user.UserProcessor;
 import com.express.application.port.output.user.UserReader;
 import com.express.domain.model.user.User;
@@ -16,7 +14,7 @@ public class UserPersistenceAdapter implements UserReader, UserProcessor {
     private final UserSpringDataJpaRepository userSpringDataJpaRepository;
 
     @Override
-    public void saveUser(UserInfoCreateDTO.UserCreateDto user) {
+    public void saveUser(User user) {
         //Jpa Entity로 변환 과정 필요
 
     }
@@ -27,7 +25,7 @@ public class UserPersistenceAdapter implements UserReader, UserProcessor {
     }
 
     @Override
-    public User updateUserById(Long id, UserInfoUpdateDTO user) {
+    public User updateUserById(Long id, User user) {
         //JpaEntity 변환 과정이 필요함
         return null;
     }

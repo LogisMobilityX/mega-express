@@ -1,4 +1,4 @@
-package com.express.adapter.input.rest.common;
+package com.express.infrasturcture.common;
 
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.core.MethodParameter;
