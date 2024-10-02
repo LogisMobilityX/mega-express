@@ -4,10 +4,12 @@ import com.express.application.port.output.user.UserProcessor;
 import com.express.application.port.output.user.UserReader;
 import com.express.domain.model.user.User;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.Map;
 import java.util.Optional;
 
+@Slf4j
 @RequiredArgsConstructor
 public class UserPersistenceAdapter implements UserReader, UserProcessor {
 

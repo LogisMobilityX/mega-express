@@ -8,10 +8,17 @@ import com.express.application.port.input.user.request.CertifiedEmailRequest;
 import com.express.application.port.input.user.request.JoinUserRequest;
 import com.express.application.port.input.user.request.ModifyUserRequest;
 import com.express.application.port.input.user.response.ReadUserResponse;
+import com.express.application.port.output.inmemory.redis.RedisProcessor;
 import com.express.application.port.output.user.UserProcessor;
 import com.express.application.port.output.user.UserReader;
 import com.express.application.service.messaging.MessagePublisher;
+import com.express.infrasturcture.common.email.EmailConfig;
+import jakarta.mail.internet.MimeMessage;
+import jakarta.validation.constraints.Email;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
@@ -26,18 +33,20 @@ import java.util.Optional;
  * 로그아웃
  *
  */
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class UserService implements UserProcessorUseCase,
                                     UserReadUseCase,
                                     UserAuthUseCase {
-    private UserProcessor userProcessor;
-    private UserReader userReader;
+    private final UserProcessor userProcessor;
+    private final UserReader userReader;
     private final MessagePublisher messagePublisher;
+    private final JavaMailSender javaMailSender;
+    private final RedisProcessor redisProcessor;
 
     @Override
     public void createUser(JoinUserRequest joinUserRequest) {
-
     }
 
     @Override
@@ -52,11 +61,31 @@ public class UserService implements UserProcessorUseCase,
 
     @Override
     public String sendCertifiedEmail(String email) {
+        MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+        try {
+            MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, false, "UTF-8");
+            mimeMessageHelper.setTo(email); // 메일 수신자
+            mimeMessageHelper.setSubject("로지모 인증 번호"); // 메일 제목
+            mimeMessageHelper.setText("", false); // 메일 본문 내용, HTML 여부
+            // 보내기 전 redis에 1차 저장
+            redisProcessor.setValues(email,getEmailContent(email),360);
+
+            //전송
+            javaMailSender.send(mimeMessage);
+
+            log.info("Succeeded to send Email");
+        } catch (Exception e) {
+            log.info("Failed to send Email");
+            throw new RuntimeException(e);
+        }
         return "";
     }
 
     @Override
     public String certifiedEmail(CertifiedEmailRequest certifiedEmailRequest) {
+        //레디스에서 Email값으로 인증 번호 가지고 옴
+
+        //인증 번호 검증
         return "";
     }
 
@@ -79,9 +108,8 @@ public class UserService implements UserProcessorUseCase,
     public String logOut() {
         return "";
     }
-    /**
-     *
-     * @param userCreateDto
-     */
+    public String getEmailContent(String email){
+        return "";
+    }
 
 }
