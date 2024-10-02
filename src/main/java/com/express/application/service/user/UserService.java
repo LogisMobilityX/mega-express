@@ -60,7 +60,7 @@ public class UserService implements UserProcessorUseCase,
     }
 
     @Override
-    public String sendCertifiedEmail(String email) {
+    public void sendCertifiedEmail(String email) {
         MimeMessage mimeMessage = javaMailSender.createMimeMessage();
         try {
             MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, false, "UTF-8");
@@ -78,7 +78,6 @@ public class UserService implements UserProcessorUseCase,
             log.info("Failed to send Email");
             throw new RuntimeException(e);
         }
-        return "";
     }
 
     @Override
@@ -109,6 +108,8 @@ public class UserService implements UserProcessorUseCase,
         return "";
     }
     public String getEmailContent(String email){
+        //HTML 형식으로 할지
+        //그냥 text로 할지
         return "";
     }
 

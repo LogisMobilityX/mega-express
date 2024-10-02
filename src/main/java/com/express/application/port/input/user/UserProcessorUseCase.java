@@ -15,9 +15,7 @@ public interface UserProcessorUseCase {
     //user 삭제
     String deleteUserInfo(Long userId);
 
-    String sendCertifiedEmail(String email);
 
-    String certifiedEmail(CertifiedEmailRequest certifiedEmailRequest);
 
 }
 
