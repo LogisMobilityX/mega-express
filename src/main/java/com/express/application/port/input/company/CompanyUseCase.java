@@ -11,4 +11,6 @@ public interface CompanyUseCase {
 
     boolean modifyCompany(ModifyCompanyCommand command);
 
+    boolean modifyRejectedCompany(ModifyCompanyCommand command);
+
 }

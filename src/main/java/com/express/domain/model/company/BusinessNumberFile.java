@@ -10,6 +10,15 @@ public class BusinessNumberFile {
     }
 
     private BusinessNumberFile(MultipartFile file) {
+        if(!isValidFile(file)) throw new RuntimeException();
         this.file = file;
+    }
+
+    private static boolean isValidFile(MultipartFile file) {
+        String contentType = file.getContentType();
+        return contentType != null &&
+            (contentType.equals("application/pdf") ||
+                contentType.equals("image/jpeg") ||
+                contentType.equals("image/png"));
     }
 }
