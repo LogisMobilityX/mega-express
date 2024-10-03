@@ -15,25 +15,25 @@ import java.util.concurrent.TimeUnit;
 @Service
 @RequiredArgsConstructor
 public class RedisAdapter implements RedisProcessor {
-    private RedisTemplate<String,Object> redisTemplate;
+    private final RedisTemplate<String,String> redisTemplate;
     @Override
-    public void setValues(String key, String value) {
-        ValueOperations<String, Object> stringObjectValueOperations = redisTemplate.opsForValue();
-        stringObjectValueOperations.set(key,value);
+    public void setValues(String key, Object value) {
+        ValueOperations<String, String> stringObjectValueOperations = redisTemplate.opsForValue();
+        stringObjectValueOperations.set(key,String.valueOf(value));
         log.info("sucessfully set value to redis");
     }
 
     @Override
-    public void setValues(String key, String value,long timeout) {
-        ValueOperations<String, Object> opsForValue = redisTemplate.opsForValue();
-        opsForValue.set(key,value);
-        redisTemplate.expire(key,timeout, TimeUnit.SECONDS);
+    public void setValues(String key, Object value,TimeUnit timeUnit,long timeout) {
+        ValueOperations<String, String> stringObjectValueOperations = redisTemplate.opsForValue();
+        stringObjectValueOperations.set(key,String.valueOf(value));
+        redisTemplate.expire(key,timeout, timeUnit);
         log.info("sucessfully set value to redis");
     }
 
     @Override
     public Object getValue(String key) {
-        ValueOperations<String, Object> opsForValue = redisTemplate.opsForValue();
+        ValueOperations<String, String> opsForValue = redisTemplate.opsForValue();
         Object object = opsForValue.get(key);
         return object;
     }

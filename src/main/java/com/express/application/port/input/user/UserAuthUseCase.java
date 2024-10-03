@@ -13,5 +13,5 @@ public interface UserAuthUseCase {
     String logOut();
     void sendCertifiedEmail(String email);
 
-    String certifiedEmail(CertifiedEmailRequest certifiedEmailRequest);
+    boolean certifiedEmail(CertifiedEmailRequest certifiedEmailRequest);
 }

@@ -41,28 +41,6 @@ public class UserController {
         //수정Form을 받아서 수정
     }
 
-    @PostMapping(value = "/certifiedEmail/send")
-    public String sendCertifiedEmail(String email){
-        /*
-         * 이메일 인증은 회원 정보가 없는 상태에서 진행 된다.
-         * 이메일로 랜덤코드 발급 -> 인증하기
-         */
-        return "";
-    }
-
-    @PostMapping("/certifiedEmail")
-    public boolean certifiedEmail(CertifiedEmailRequest certifiedEmailRequest){
-        /*
-         * 이메일 인증 로직
-         * key - email , value - randomCode 로 redis 에 저장
-         * 조회 후 검증
-         * 검증 완료했다면 redis 에서 삭제 후 true 반환
-         * 검증 실패했다면 false 반환
-         * 프론트는 이 코드를 항상 false로 유지하고 인증 성공하면 true로 바꾼 다음 회원가입 진행
-         * false로 넘어오면 회원가입 불가
-         */
-        return false;
-    }
 
 
 

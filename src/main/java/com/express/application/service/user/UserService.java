@@ -13,17 +13,17 @@ import com.express.application.port.output.user.UserProcessor;
 import com.express.application.port.output.user.UserReader;
 import com.express.application.service.messaging.MessagePublisher;
 import com.express.infrasturcture.common.UseCase;
+import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
-import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
 import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 /*
  * 유저 생성
@@ -64,13 +64,12 @@ public class UserService implements UserProcessorUseCase,
     public void sendCertifiedEmail(String email) {
         MimeMessage mimeMessage = javaMailSender.createMimeMessage();
         try {
-            MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, false, "UTF-8");
-            mimeMessageHelper.setTo(email); // 메일 수신자
-            mimeMessageHelper.setSubject("로지모 인증 번호"); // 메일 제목
-            mimeMessageHelper.setText(getEmailContent(email), true); // 메일 본문 내용, HTML 여부
+            //인증번호 생성
+            int authorizationCode =  randomAuthorizationCode();
+            //이메일 전송 전 형태 구성
+            makeEmailForm(mimeMessage,email,getEmailContent(authorizationCode));
             // 보내기 전 redis에 1차 저장
-            //redisProcessor.setValues(email,getEmailContent(email),360);
-
+            redisProcessor.setValues(email,authorizationCode, TimeUnit.SECONDS ,300);
             //전송
             javaMailSender.send(mimeMessage);
 
@@ -82,11 +81,15 @@ public class UserService implements UserProcessorUseCase,
     }
 
     @Override
-    public String certifiedEmail(CertifiedEmailRequest certifiedEmailRequest) {
-        //레디스에서 Email값으로 인증 번호 가지고 옴
-
-        //인증 번호 검증
-        return "";
+    public boolean certifiedEmail(CertifiedEmailRequest certifiedEmailRequest) {
+        /*
+        레디스에서 Email값으로 인증 번호 가지고 와서 요청으로 받은 코드와 비교
+        다르면 false
+        같으면 true
+         */
+        Object value = redisProcessor.getValue(certifiedEmailRequest.getEmail());
+        log.info("Certified code in redis : {}", value);
+        return certifiedEmailRequest.compareCertifiedCode(value);
     }
 
     @Override
@@ -108,11 +111,14 @@ public class UserService implements UserProcessorUseCase,
     public String logOut() {
         return "";
     }
-    public String getEmailContent(String email){
-        //HTML 형식으로 할지
-        Random random = new Random();
-        int authCode = random.nextInt(900000) + 100000;
-        //그냥 text로 할지
+
+    public void makeEmailForm(MimeMessage mimeMessage,String email, String emailContent) throws MessagingException {
+        MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, false, "UTF-8");
+        mimeMessageHelper.setTo(email); // 메일 수신자
+        mimeMessageHelper.setSubject("로지모 인증 번호"); // 메일 제목
+        mimeMessageHelper.setText(emailContent, true); // 메일 본문 내용, HTML 여부
+    }
+    public String getEmailContent(int authCode){
         return "<!DOCTYPE html>\n" +
                 "<html>\n" +
                 "<head>\n" +
@@ -126,12 +132,19 @@ public class UserService implements UserProcessorUseCase,
                 "</head>\n" +
                 "<body>\n" +
                 "    <div style=\"text-align: center;\">\n" +
-                "        <h2>이메일 인증 코드</h2>\n" +
+                "        <h2>로지모 이메일 인증 코드</h2>\n" +
                 "        <p>아래의 인증 코드를 사용하여 이메일 인증을 완료하세요:</p>\n" +
                 "        <p class=\"auth-code\">" + authCode + "</p>\n" +
                 "    </div>\n" +
                 "</body>\n" +
                 "</html>";
     }
+
+    private int randomAuthorizationCode() {
+        Random random = new Random();
+        int authCode = random.nextInt(900000) + 100000;
+        return authCode;
+    }
+
 
 }
