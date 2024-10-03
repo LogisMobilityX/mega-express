@@ -1,11 +1,8 @@
 package com.express.application.port.output.user;
 
 import com.express.domain.model.user.User;
-import org.springframework.stereotype.Repository;
 
 import java.util.Map;
-
-@Repository
 public interface UserProcessor {
     void saveUser(User user);
     void deleteUserById(Long id);
