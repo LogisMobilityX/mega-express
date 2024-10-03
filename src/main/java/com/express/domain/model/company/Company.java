@@ -18,7 +18,7 @@ public class Company extends EventBase {
 
     private final CompanyCode companyCode;
     private final BusinessNumber businessNumber;
-    private final MultipartFile businessNumberFile;
+    private final BusinessNumberFile businessNumberFile;
     private final Status status;
 
     public static Company registerBy(RegisterCompanyCommand command){
@@ -29,7 +29,7 @@ public class Company extends EventBase {
     @Builder
     private Company(
         Owner owner, String companyName, CompanyCategory companyCategory, LocalDateTime companyStartDate, CompanyCode companyCode,  BusinessNumber businessNumber,
-        MultipartFile businessNumberFile, Status status) {
+        BusinessNumberFile businessNumberFile, Status status) {
         this.owner = owner;
         this.companyName = companyName;
         this.companyCategory = companyCategory;
@@ -38,5 +38,9 @@ public class Company extends EventBase {
         this.businessNumber = businessNumber;
         this.businessNumberFile = businessNumberFile;
         this.status = status;
+    }
+
+    public static Company register(RegisterCompanyCommand command) {
+        return null;
     }
 }
