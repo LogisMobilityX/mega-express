@@ -12,17 +12,18 @@ import com.express.application.port.output.inmemory.redis.RedisProcessor;
 import com.express.application.port.output.user.UserProcessor;
 import com.express.application.port.output.user.UserReader;
 import com.express.application.service.messaging.MessagePublisher;
-import com.express.infrasturcture.common.email.EmailConfig;
+import com.express.infrasturcture.common.UseCase;
 import jakarta.mail.internet.MimeMessage;
-import jakarta.validation.constraints.Email;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
 import java.util.Optional;
+import java.util.Random;
 
 /*
  * 유저 생성
@@ -34,16 +35,16 @@ import java.util.Optional;
  *
  */
 @Slf4j
-@Service
+@UseCase
 @RequiredArgsConstructor
 public class UserService implements UserProcessorUseCase,
                                     UserReadUseCase,
                                     UserAuthUseCase {
     private final UserProcessor userProcessor;
     private final UserReader userReader;
+    private final RedisProcessor redisProcessor;
     private final MessagePublisher messagePublisher;
     private final JavaMailSender javaMailSender;
-    private final RedisProcessor redisProcessor;
 
     @Override
     public void createUser(JoinUserRequest joinUserRequest) {
@@ -66,9 +67,9 @@ public class UserService implements UserProcessorUseCase,
             MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, false, "UTF-8");
             mimeMessageHelper.setTo(email); // 메일 수신자
             mimeMessageHelper.setSubject("로지모 인증 번호"); // 메일 제목
-            mimeMessageHelper.setText("", false); // 메일 본문 내용, HTML 여부
+            mimeMessageHelper.setText(getEmailContent(email), true); // 메일 본문 내용, HTML 여부
             // 보내기 전 redis에 1차 저장
-            redisProcessor.setValues(email,getEmailContent(email),360);
+            //redisProcessor.setValues(email,getEmailContent(email),360);
 
             //전송
             javaMailSender.send(mimeMessage);
@@ -109,8 +110,28 @@ public class UserService implements UserProcessorUseCase,
     }
     public String getEmailContent(String email){
         //HTML 형식으로 할지
+        Random random = new Random();
+        int authCode = random.nextInt(900000) + 100000;
         //그냥 text로 할지
-        return "";
+        return "<!DOCTYPE html>\n" +
+                "<html>\n" +
+                "<head>\n" +
+                "    <style>\n" +
+                "        .auth-code {\n" +
+                "            font-size: 24px;\n" +
+                "            font-weight: bold;\n" +
+                "            color: #333333;\n" +
+                "        }\n" +
+                "    </style>\n" +
+                "</head>\n" +
+                "<body>\n" +
+                "    <div style=\"text-align: center;\">\n" +
+                "        <h2>이메일 인증 코드</h2>\n" +
+                "        <p>아래의 인증 코드를 사용하여 이메일 인증을 완료하세요:</p>\n" +
+                "        <p class=\"auth-code\">" + authCode + "</p>\n" +
+                "    </div>\n" +
+                "</body>\n" +
+                "</html>";
     }
 
 }

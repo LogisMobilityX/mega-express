@@ -1,10 +1,10 @@
 package com.express.application.port.output.inmemory.redis;
 
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 
 import java.time.Duration;
 
-@Repository
 public interface RedisProcessor {
     void setValues(String key, String value);                       // 값 등록 / 수정
 

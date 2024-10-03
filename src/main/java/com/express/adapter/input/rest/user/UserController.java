@@ -6,9 +6,11 @@ import com.express.application.port.input.user.request.CertifiedEmailRequest;
 import com.express.application.port.input.user.request.JoinUserRequest;
 import com.express.application.port.input.user.request.ModifyUserRequest;
 import com.express.application.port.input.user.request.WithdrawalUserRequest;
+import com.express.infrasturcture.common.WebAdapter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+@WebAdapter
 @RestController(value = "/v1/api/user")
 @RequiredArgsConstructor
 public class UserController {

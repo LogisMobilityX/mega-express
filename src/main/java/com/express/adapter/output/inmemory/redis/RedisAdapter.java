@@ -6,14 +6,16 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Service;
 
 import java.time.Duration;
 import java.util.concurrent.TimeUnit;
 
 @Slf4j
+@Service
 @RequiredArgsConstructor
 public class RedisAdapter implements RedisProcessor {
-    private final RedisTemplate<String,Object> redisTemplate;
+    private RedisTemplate<String,Object> redisTemplate;
     @Override
     public void setValues(String key, String value) {
         ValueOperations<String, Object> stringObjectValueOperations = redisTemplate.opsForValue();
