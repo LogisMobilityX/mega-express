@@ -1,16 +1,8 @@
-package com.express.domain.model.user;
+package com.express.application.port.input.user.request;
 
+import com.express.domain.model.user.UserGrade;
 
-import com.express.domain.model.EventBase;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-
-
-@Getter
-@AllArgsConstructor
-@NoArgsConstructor
-public class User extends EventBase {
+public class ModifyUserRequest {
     //이메일
     private String email;
 
@@ -28,5 +20,4 @@ public class User extends EventBase {
 
     //권한 JSON
     private String userAuth;
-
 }
