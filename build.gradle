@@ -44,6 +44,10 @@ dependencies {
 	testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
 	testImplementation 'org.springframework.security:spring-security-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+	//aws
+	implementation 'software.amazon.awssdk:s3:2.20.0'
+
 }
 
 tasks.named('test') {

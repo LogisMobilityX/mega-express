@@ -1,6 +1,6 @@
 package com.express.adapter.input.rest.company;
 
-import com.express.adapter.input.rest.responseTemplate.CustomResponse;
+import com.express.infrasturcture.common.CustomResponse;
 import com.express.adapter.input.rest.company.model.CompanyCreateModel;
 import com.express.application.port.input.company.CompanyUseCase;
 import lombok.RequiredArgsConstructor;
@@ -16,8 +16,9 @@ public class CompanyController {
 
 
     @PostMapping
-    public ResponseEntity<CustomResponse> createCompany(@RequestBody CompanyCreateModel model){
-        //companyUseCase.registerCompany(model) //model -> command mapper 추가
+    public ResponseEntity<CustomResponse> createCompany(@RequestBody CompanyCreateRequest request){
+
+        companyUseCase.registerCompany(request.toCommand()); //model -> command mapper 추가
 
         return null;
     }
