@@ -8,7 +8,7 @@ import com.express.application.port.input.user.request.CertifiedEmailRequest;
 import com.express.application.port.input.user.request.JoinUserRequest;
 import com.express.application.port.input.user.request.ModifyUserRequest;
 import com.express.application.port.input.user.response.ReadUserResponse;
-import com.express.application.port.output.inmemory.redis.RedisProcessor;
+import com.express.application.port.output.inmemory.redis.CacheProcessor;
 import com.express.application.port.output.user.UserProcessor;
 import com.express.application.port.output.user.UserReader;
 import com.express.application.service.messaging.MessagePublisher;
@@ -42,7 +42,7 @@ public class UserService implements UserProcessorUseCase,
                                     UserAuthUseCase {
     private final UserProcessor userProcessor;
     private final UserReader userReader;
-    private final RedisProcessor redisProcessor;
+    private final CacheProcessor cacheProcessor;
     private final MessagePublisher messagePublisher;
     private final JavaMailSender javaMailSender;
 
@@ -69,7 +69,7 @@ public class UserService implements UserProcessorUseCase,
             //이메일 전송 전 형태 구성
             makeEmailForm(mimeMessage,email,getEmailContent(authorizationCode));
             // 보내기 전 redis에 1차 저장
-            redisProcessor.setValues(email,authorizationCode, TimeUnit.SECONDS ,300);
+            cacheProcessor.setValues(email,authorizationCode, TimeUnit.SECONDS ,300);
             //전송
             javaMailSender.send(mimeMessage);
 
@@ -87,7 +87,7 @@ public class UserService implements UserProcessorUseCase,
         다르면 false
         같으면 true
          */
-        Object value = redisProcessor.getValue(certifiedEmailRequest.getEmail());
+        Object value = cacheProcessor.getValue(certifiedEmailRequest.getEmail());
         log.info("Certified code in redis : {}", value);
         return certifiedEmailRequest.compareCertifiedCode(value);
     }

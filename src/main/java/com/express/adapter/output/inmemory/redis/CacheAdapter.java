@@ -1,20 +1,18 @@
 package com.express.adapter.output.inmemory.redis;
 
-import com.express.application.port.output.inmemory.redis.RedisProcessor;
+import com.express.application.port.output.inmemory.redis.CacheProcessor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
-import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 
-import java.time.Duration;
 import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class RedisAdapter implements RedisProcessor {
+public class CacheAdapter implements CacheProcessor {
     private final RedisTemplate<String,String> redisTemplate;
     @Override
     public void setValues(String key, Object value) {
