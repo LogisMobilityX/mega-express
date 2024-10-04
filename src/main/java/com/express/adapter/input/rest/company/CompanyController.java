@@ -1,6 +1,6 @@
 package com.express.adapter.input.rest.company;
 
-import com.express.adapter.input.rest.CustomResponse;
+import com.express.adapter.input.rest.responseTemplate.CustomResponse;
 import com.express.adapter.input.rest.company.model.CompanyCreateModel;
 import com.express.application.port.input.company.CompanyUseCase;
 import lombok.RequiredArgsConstructor;

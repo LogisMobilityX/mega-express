@@ -1,4 +1,4 @@
-package com.express.adapter.input.rest;
+package com.express.adapter.input.rest.responseTemplate;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
