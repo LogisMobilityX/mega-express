@@ -1,7 +1,6 @@
 package com.express.application.port.input.user;
 
-import com.express.application.port.input.user.response.ReadUserResponse;
-import com.express.domain.model.user.User;
+import com.express.adapter.input.rest.user.response.ReadUserResponse;
 
 import java.util.Optional;
 

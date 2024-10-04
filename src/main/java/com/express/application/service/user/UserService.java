@@ -1,25 +1,18 @@
 package com.express.application.service.user;
 
 
-import com.express.application.port.input.user.UserAuthUseCase;
-import com.express.application.port.input.user.UserProcessorUseCase;
-import com.express.application.port.input.user.UserReadUseCase;
-import com.express.application.port.input.user.request.CertifiedEmailRequest;
-import com.express.application.port.input.user.request.JoinUserRequest;
-import com.express.application.port.input.user.request.ModifyUserRequest;
-import com.express.application.port.input.user.response.ReadUserResponse;
+import com.express.adapter.common.UseCase;
+import com.express.adapter.input.rest.user.request.ModifyUserRequest;
+import com.express.adapter.input.rest.user.response.ReadUserResponse;
+import com.express.application.port.input.user.*;
 import com.express.application.port.output.email.EmailSender;
 import com.express.application.port.output.inmemory.redis.CacheProcessor;
 import com.express.application.port.output.user.UserProcessor;
 import com.express.application.port.output.user.UserReader;
 import com.express.application.service.messaging.MessagePublisher;
-import com.express.adapter.common.UseCase;
-import jakarta.mail.MessagingException;
-import jakarta.mail.internet.MimeMessage;
+import com.express.domain.model.user.Email;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessageHelper;
 
 import java.util.Map;
 import java.util.Optional;
@@ -39,8 +32,8 @@ import java.util.concurrent.TimeUnit;
 @UseCase
 @RequiredArgsConstructor
 public class UserService implements UserProcessorUseCase,
-                                    UserReadUseCase,
-                                    UserAuthUseCase {
+        UserReadUseCase,
+        UserAuthUseCase {
     private final UserProcessor userProcessor;
     private final UserReader userReader;
     private final CacheProcessor cacheProcessor;
@@ -48,43 +41,45 @@ public class UserService implements UserProcessorUseCase,
     private final EmailSender emailSender;
 
     @Override
-    public void createUser(JoinUserRequest joinUserRequest) {
+    public void joinUser(JoinUserCommand joinUserRequest) {
+        //user 객체로 변환
+        userProcessor.saveUser(joinUserRequest.toUser());
     }
 
     @Override
-    public ModifyUserRequest updateUserInfo(ModifyUserRequest userUpdateDto) {
+    public ModifyUserRequest updateUserInfo(ModifyUserCommand userUpdateDto) {
         return null;
     }
 
     @Override
-    public String deleteUserInfo(Long userId) {
+    public String deleteUserInfo(WithdrawalUserCommand withdrawalUserCommand) {
         return "";
     }
 
     @Override
-    public void sendCertifiedEmail(String email) {
+    public void sendCertifiedEmail(Email email) {
 
-            //인증번호 생성
-            int authorizationCode =  randomAuthorizationCode();
+        //인증번호 생성
+        int authorizationCode = randomAuthorizationCode();
 
-            // 보내기 전 redis에 1차 저장
-            cacheProcessor.setValues(email,authorizationCode, TimeUnit.SECONDS ,300);
+        // 보내기 전 redis에 1차 저장
+        cacheProcessor.setValues(email.getEmailText(), authorizationCode, TimeUnit.SECONDS, 300);
 
-            //이메일 전송
-            emailSender.sendCertifiedCode(email,authorizationCode);
+        //이메일 전송
+        emailSender.sendCertifiedCode(email.getEmailText(), authorizationCode);
 
-            log.info("Succeeded to send Email");
+        log.info("Succeeded to send Email");
 
     }
 
     @Override
-    public boolean certifiedEmail(CertifiedEmailRequest certifiedEmailRequest) {
+    public boolean certifiedEmail(CertifiedEmailCommand certifiedEmailRequest) {
         /*
         레디스에서 Email값으로 인증 번호 가지고 와서 요청으로 받은 코드와 비교
         다르면 false
         같으면 true
          */
-        Object value = cacheProcessor.getValue(certifiedEmailRequest.getEmail());
+        Object value = cacheProcessor.getValue(certifiedEmailRequest.email().getEmailText());
         log.info("Certified code in redis : {}", value);
         return certifiedEmailRequest.compareCertifiedCode(value);
     }

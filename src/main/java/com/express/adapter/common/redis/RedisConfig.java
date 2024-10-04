@@ -32,24 +32,4 @@ public class RedisConfig {
      *
      * @return
      */
-    @Bean
-    public RedisTemplate<String, String> redisTemplate() {
-        RedisTemplate<String, String> redisTemplate = new RedisTemplate<>();
-
-        // Redis를 연결합니다.
-        redisTemplate.setConnectionFactory(redisConnectionFactory());
-
-        // Key-Value 형태로 직렬화를 수행.
-        redisTemplate.setKeySerializer(new StringRedisSerializer());
-        redisTemplate.setValueSerializer(new StringRedisSerializer());
-
-        // Hash Key-Value 형태로 직렬화를 수행.
-        redisTemplate.setHashKeySerializer(new StringRedisSerializer());
-        redisTemplate.setHashValueSerializer(new StringRedisSerializer());
-
-        // 기본적으로 직렬화를 수행.
-        redisTemplate.setDefaultSerializer(new StringRedisSerializer());
-
-        return redisTemplate;
-    }
 }

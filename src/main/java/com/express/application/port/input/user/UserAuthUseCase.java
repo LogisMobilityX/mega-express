@@ -1,7 +1,7 @@
 package com.express.application.port.input.user;
 
-import com.express.application.port.input.user.request.CertifiedEmailRequest;
-import org.springframework.stereotype.Component;
+import com.express.adapter.input.rest.user.request.CertifiedEmailRequest;
+import com.express.domain.model.user.Email;
 
 import java.util.Map;
 
@@ -11,7 +11,7 @@ public interface UserAuthUseCase {
     Map<String,Object> login();
 
     String logOut();
-    void sendCertifiedEmail(String email);
+    void sendCertifiedEmail(Email email);
 
-    boolean certifiedEmail(CertifiedEmailRequest certifiedEmailRequest);
+    boolean certifiedEmail(CertifiedEmailCommand certifiedEmailRequest);
 }

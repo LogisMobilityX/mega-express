@@ -5,13 +5,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 
 import java.util.Properties;
-
 @Configuration
-@RequiredArgsConstructor
 public class EmailConfig {
     private static final String MAIL_SMTP_AUTH = "mail.smtp.auth";
     private static final String MAIL_DEBUG = "mail.smtp.debug";
@@ -33,7 +32,7 @@ public class EmailConfig {
     @Value("${spring.mail.properties.mail.smtp.connectiontimeout}")
     private int connectionTimeout;
 
-    @Value("${spring.mail.properties.mail.starttls.enable}")
+    @Value("${spring.mail.properties.mail.smtp.starttls.enable}")
     private boolean startTlsEnable;
 
     /*

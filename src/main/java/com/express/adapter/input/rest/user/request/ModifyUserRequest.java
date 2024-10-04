@@ -1,4 +1,4 @@
-package com.express.application.port.input.user.request;
+package com.express.adapter.input.rest.user.request;
 
 import com.express.domain.model.user.UserGrade;
 

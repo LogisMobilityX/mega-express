@@ -1,10 +1,7 @@
 package com.express.adapter.output.persistence.jpa.user;
 
 import com.express.domain.model.user.UserGrade;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,6 +18,7 @@ import org.springframework.data.domain.AbstractAggregateRoot;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
+@Table(name = "user")
 public class UserJpaEntity {
     //PK
     @Id
@@ -28,22 +26,34 @@ public class UserJpaEntity {
     //JPA 에서 기본키 값을 자동으로 생성할 때 사용하는 옵션
     private Long id;
 
+    @Column
     //이메일
     private String email;
 
+    @Column
+    private String username;
+    @Column
     //유저등급
     private UserGrade userGrade;
-
+    @Column
     //패스워드
     private String password;
-
+    @Column
     //전화번호
     private String phoneNumber;
+
+    public UserJpaEntity(String phoneNumber,String username ,String password, UserGrade userGrade, String email) {
+        this.phoneNumber = phoneNumber;
+        this.username = username;
+        this.password = password;
+        this.userGrade = userGrade;
+        this.email = email;
+    }
 
     //회사
     //private Company company;
 
     //권한 JSON
-    private String userAuth;
+    //private String userAuth;
 
 }

@@ -16,11 +16,12 @@ import java.util.Optional;
 public class UserPersistenceAdapter implements UserReader, UserProcessor {
 
     private final UserSpringDataJpaRepository userSpringDataJpaRepository;
+    private final UserProcessorMapper userProcessorMapper;
 
     @Override
     public void saveUser(User user) {
         //Jpa Entity로 변환 과정 필요
-
+        userSpringDataJpaRepository.save(UserProcessorMapper.mapToJpaEntity(user));
     }
 
     @Override

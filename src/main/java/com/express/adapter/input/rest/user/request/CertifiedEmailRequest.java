@@ -1,5 +1,7 @@
-package com.express.application.port.input.user.request;
+package com.express.adapter.input.rest.user.request;
 
+import com.express.application.port.input.user.CertifiedEmailCommand;
+import com.express.domain.model.user.Email;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -20,8 +22,16 @@ public class CertifiedEmailRequest {
         return false;
     }
 
-    public String getEmail() {
+    public String email() {
         return email;
     }
+
+    public CertifiedEmailCommand toCertifiedEmailCommand() {
+        return CertifiedEmailCommand.builder()
+                .email(Email.from(email))
+                .certifiedCode(certifiedCode)
+                .build();
+    }
+
 
 }

@@ -1,9 +1,10 @@
 package com.express.adapter.input.rest.user;
 
 import com.express.application.port.input.user.UserAuthUseCase;
-import com.express.application.port.input.user.request.CertifiedEmailRequest;
-import com.express.application.port.input.user.request.LoginUserRequest;
+import com.express.adapter.input.rest.user.request.CertifiedEmailRequest;
+import com.express.adapter.input.rest.user.request.LoginUserRequest;
 import com.express.adapter.common.WebAdapter;
+import com.express.domain.model.user.Email;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -40,7 +41,7 @@ public class UserAuthController {
      */
     @PostMapping(value = "/certifiedEmail/send")
     public ResponseEntity<Void> sendCertifiedEmail(@RequestBody String email){
-        userAuthUseCase.sendCertifiedEmail(email);
+        userAuthUseCase.sendCertifiedEmail(Email.from(email));
         return ResponseEntity.noContent().build();
     }
 
@@ -54,9 +55,9 @@ public class UserAuthController {
      * false로 넘어오면 회원가입 불가
      */
     @PostMapping("/certifiedEmail")
-    public boolean certifiedEmail(CertifiedEmailRequest certifiedEmailRequest){
+    public boolean certifiedEmail(@RequestBody CertifiedEmailRequest certifiedEmailRequest){
 
-        return userAuthUseCase.certifiedEmail(certifiedEmailRequest);
+        return userAuthUseCase.certifiedEmail(certifiedEmailRequest.toCertifiedEmailCommand());
 
     }
 
