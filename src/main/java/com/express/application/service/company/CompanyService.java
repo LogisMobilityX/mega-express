@@ -11,8 +11,6 @@ import com.express.application.port.output.messaging.MessagePublisher;
 import com.express.domain.model.company.Company;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Isolation;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
@@ -32,13 +30,30 @@ public class CompanyService implements CompanyUseCase {
     }
 
     @Override
-    public boolean registerCompany(RegisterCompanyCommand command) {
+    public Company registerCompany(RegisterCompanyCommand command) {
 
-        return false;
+        companyReader.readByBusinessNumber(command.businessNumber())
+            .orElseThrow(() -> new RuntimeException("Erro"));
+
+        String businessNumberFilePath = fileUploader.upload(command.getBusinessNumberFile().getFile());
+        command.getBusinessNumberFile().uploadComplete(businessNumberFilePath);
+
+        Company newCompany = Company.register(command);
+        companyProcessor.register(newCompany);
+
+        messagePublisher.publish(newCompany.listEvents());
+        newCompany.clearEvents();
+
+        return newCompany;
     }
 
     @Override
     public boolean modifyCompany(ModifyCompanyCommand command) {
+        return false;
+    }
+
+    @Override
+    public boolean modifyRejectedCompany(ModifyCompanyCommand command) {
         return false;
     }
 }

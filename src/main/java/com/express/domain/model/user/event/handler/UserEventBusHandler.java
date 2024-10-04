@@ -17,10 +17,10 @@ public class UserEventBusHandler {
      */
 
     //save User 이후 처리 될 이벤트
-    @Async
-    @TransactionalEventListener
-    public void Handle(){
-
-    }
+//    @Async
+//    @TransactionalEventListener
+//    public void Handle(){
+//
+//    }
 
 }
