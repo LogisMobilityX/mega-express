@@ -1,4 +1,4 @@
-package com.express.infrasturcture.common;
+package com.express.adapter.common;
 
 
 import org.springframework.core.annotation.AliasFor;

@@ -3,10 +3,9 @@ package com.express.adapter.output.persistence.jpa.user;
 import com.express.application.port.output.user.UserProcessor;
 import com.express.application.port.output.user.UserReader;
 import com.express.domain.model.user.User;
-import com.express.infrasturcture.common.PersistenceAdapter;
+import com.express.adapter.common.PersistenceAdapter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Repository;
 
 import java.util.Map;
 import java.util.Optional;

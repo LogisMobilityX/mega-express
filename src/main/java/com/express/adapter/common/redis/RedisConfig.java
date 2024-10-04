@@ -1,4 +1,4 @@
-package com.express.infrasturcture.common.redis;
+package com.express.adapter.common.redis;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;

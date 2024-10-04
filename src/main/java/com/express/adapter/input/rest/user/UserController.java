@@ -2,11 +2,10 @@ package com.express.adapter.input.rest.user;
 
 import com.express.application.port.input.user.UserProcessorUseCase;
 import com.express.application.port.input.user.UserReadUseCase;
-import com.express.application.port.input.user.request.CertifiedEmailRequest;
 import com.express.application.port.input.user.request.JoinUserRequest;
 import com.express.application.port.input.user.request.ModifyUserRequest;
 import com.express.application.port.input.user.request.WithdrawalUserRequest;
-import com.express.infrasturcture.common.WebAdapter;
+import com.express.adapter.common.WebAdapter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 

@@ -1,4 +1,4 @@
-package com.express.infrasturcture.common;
+package com.express.adapter.common;
 
 
 import org.springframework.core.annotation.AliasFor;
@@ -10,7 +10,8 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Component
-public  @interface UseCase {
+public @interface PersistenceAdapter {
+
     /**
      * The value may indicate a suggestion for a logical component name,
      * to be turned into a Spring bean in case of an autodetected component.

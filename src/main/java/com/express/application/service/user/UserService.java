@@ -8,11 +8,12 @@ import com.express.application.port.input.user.request.CertifiedEmailRequest;
 import com.express.application.port.input.user.request.JoinUserRequest;
 import com.express.application.port.input.user.request.ModifyUserRequest;
 import com.express.application.port.input.user.response.ReadUserResponse;
+import com.express.application.port.output.email.EmailSender;
 import com.express.application.port.output.inmemory.redis.CacheProcessor;
 import com.express.application.port.output.user.UserProcessor;
 import com.express.application.port.output.user.UserReader;
 import com.express.application.service.messaging.MessagePublisher;
-import com.express.infrasturcture.common.UseCase;
+import com.express.adapter.common.UseCase;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
@@ -44,7 +45,7 @@ public class UserService implements UserProcessorUseCase,
     private final UserReader userReader;
     private final CacheProcessor cacheProcessor;
     private final MessagePublisher messagePublisher;
-    private final JavaMailSender javaMailSender;
+    private final EmailSender emailSender;
 
     @Override
     public void createUser(JoinUserRequest joinUserRequest) {
@@ -62,22 +63,18 @@ public class UserService implements UserProcessorUseCase,
 
     @Override
     public void sendCertifiedEmail(String email) {
-        MimeMessage mimeMessage = javaMailSender.createMimeMessage();
-        try {
+
             //인증번호 생성
             int authorizationCode =  randomAuthorizationCode();
-            //이메일 전송 전 형태 구성
-            makeEmailForm(mimeMessage,email,getEmailContent(authorizationCode));
+
             // 보내기 전 redis에 1차 저장
             cacheProcessor.setValues(email,authorizationCode, TimeUnit.SECONDS ,300);
-            //전송
-            javaMailSender.send(mimeMessage);
+
+            //이메일 전송
+            emailSender.sendCertifiedCode(email,authorizationCode);
 
             log.info("Succeeded to send Email");
-        } catch (Exception e) {
-            log.info("Failed to send Email");
-            throw new RuntimeException(e);
-        }
+
     }
 
     @Override
@@ -110,34 +107,6 @@ public class UserService implements UserProcessorUseCase,
     @Override
     public String logOut() {
         return "";
-    }
-
-    public void makeEmailForm(MimeMessage mimeMessage,String email, String emailContent) throws MessagingException {
-        MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, false, "UTF-8");
-        mimeMessageHelper.setTo(email); // 메일 수신자
-        mimeMessageHelper.setSubject("로지모 인증 번호"); // 메일 제목
-        mimeMessageHelper.setText(emailContent, true); // 메일 본문 내용, HTML 여부
-    }
-    public String getEmailContent(int authCode){
-        return "<!DOCTYPE html>\n" +
-                "<html>\n" +
-                "<head>\n" +
-                "    <style>\n" +
-                "        .auth-code {\n" +
-                "            font-size: 24px;\n" +
-                "            font-weight: bold;\n" +
-                "            color: #333333;\n" +
-                "        }\n" +
-                "    </style>\n" +
-                "</head>\n" +
-                "<body>\n" +
-                "    <div style=\"text-align: center;\">\n" +
-                "        <h2>로지모 이메일 인증 코드</h2>\n" +
-                "        <p>아래의 인증 코드를 사용하여 이메일 인증을 완료하세요:</p>\n" +
-                "        <p class=\"auth-code\">" + authCode + "</p>\n" +
-                "    </div>\n" +
-                "</body>\n" +
-                "</html>";
     }
 
     private int randomAuthorizationCode() {

@@ -3,7 +3,7 @@ package com.express.adapter.input.rest.user;
 import com.express.application.port.input.user.UserAuthUseCase;
 import com.express.application.port.input.user.request.CertifiedEmailRequest;
 import com.express.application.port.input.user.request.LoginUserRequest;
-import com.express.infrasturcture.common.WebAdapter;
+import com.express.adapter.common.WebAdapter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;

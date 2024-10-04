@@ -1,4 +1,4 @@
-package com.express.infrasturcture.common.email;
+package com.express.adapter.common.email;
 
 import lombok.RequiredArgsConstructor;
 
