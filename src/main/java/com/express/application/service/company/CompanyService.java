@@ -35,8 +35,8 @@ public class CompanyService implements CompanyUseCase {
         companyReader.readByBusinessNumber(command.businessNumber())
             .orElseThrow(() -> new RuntimeException("Erro"));
 
-        String businessNumberFilePath = fileUploader.upload(command.getBusinessNumberFile().getFile());
-        command.getBusinessNumberFile().uploadComplete(businessNumberFilePath);
+        String businessNumberFilePath = fileUploader.upload(command.businessNumberFile().getFile());
+        command.businessNumberFile().uploadComplete(businessNumberFilePath);
 
         Company newCompany = Company.register(command);
         companyProcessor.register(newCompany);

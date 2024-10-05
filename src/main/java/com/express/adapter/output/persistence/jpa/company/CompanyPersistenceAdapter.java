@@ -7,7 +7,10 @@ import com.express.domain.model.company.BusinessNumber;
 import com.express.domain.model.company.Company;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Repository;
 
+
+@Repository
 @RequiredArgsConstructor
 public class CompanyPersistenceAdapter implements CompanyReader, CompanyProcessor {
 
