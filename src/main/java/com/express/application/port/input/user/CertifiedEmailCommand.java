@@ -2,11 +2,13 @@ package com.express.application.port.input.user;
 
 import com.express.domain.model.user.Email;
 import lombok.Builder;
+import lombok.Getter;
 
 import static org.springframework.util.ObjectUtils.isEmpty;
 
 @Builder
 public class CertifiedEmailCommand {
+    @Getter
     private Email email;
     private String certifiedCode;
 
@@ -20,9 +22,11 @@ public class CertifiedEmailCommand {
         return false;
     }
 
-    public Email email() {
-        return email;
-    }
 
+
+    public CertifiedEmailCommand(Email email, String certifiedCode) {
+        this.email = email;
+        this.certifiedCode = certifiedCode;
+    }
 
 }

@@ -33,8 +33,4 @@ public class JoinUserCommand {
         this.certifiedEmail = certifiedEmail;
     }
 
-
-    public User toUser() {
-        return new User(email, username, userGrade, password, phoneNumber);
-    }
 }

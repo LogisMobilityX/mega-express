@@ -1,17 +1,16 @@
 package com.express.application.port.input.user;
 
 import com.express.domain.model.user.Password;
-import com.express.domain.model.user.UserId;
-import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Getter;
 
 @Builder
-@Getter
-public class WithdrawalUserCommand {
+public class ChangePasswordCommand {
+
+    @Getter
     private Password password;
 
-    public WithdrawalUserCommand(@NotNull Password password) {
+    public ChangePasswordCommand(Password password) {
         this.password = password;
     }
 }

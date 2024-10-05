@@ -45,6 +45,7 @@ public class UserAuthController {
         return ResponseEntity.noContent().build();
     }
 
+
     /*
      * 이메일 인증 로직
      * key - email , value - randomCode 로 redis 에 저장

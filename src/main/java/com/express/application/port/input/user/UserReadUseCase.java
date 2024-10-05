@@ -6,7 +6,7 @@ import java.util.Optional;
 
 
 public interface UserReadUseCase {
-    Optional<ReadUserResponse> findByEmail(String email);
-    Optional<ReadUserResponse> findById(String id);
+    ReadUserResponse findByEmail(String email);
+    ReadUserResponse findById(Long userId);
 
 }

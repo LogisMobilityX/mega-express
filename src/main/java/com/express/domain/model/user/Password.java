@@ -13,6 +13,12 @@ public class Password {
     private boolean ValidPasswordPattern(String password) {
         return password.matches(PASSWORD_REGEX);
     }
+    public boolean comparePassword(String inputPassword) {
+        if (password.equals(inputPassword)){
+           return true;
+        }
+        return false;
+    }
 
     public String getPasswordText() {
         return password;
