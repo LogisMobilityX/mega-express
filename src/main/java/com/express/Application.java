@@ -3,8 +3,10 @@ package com.express;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 @SpringBootApplication
+@EnableJpaAuditing
 @ComponentScan(basePackages = {"com.express.application", "com.express.adapter","com.express.infrastructure","com.express.domain"})
 public class Application {
 
