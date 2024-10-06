@@ -1,4 +1,4 @@
 package com.express.adapter.common.spring.security;
 
-public class SecurityConfig {
+public class SpringSecurityConfig {
 }
