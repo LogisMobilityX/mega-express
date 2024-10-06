@@ -5,13 +5,13 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class UserProcessorMapper {
-    public static  UserJpaEntity mapToJpaEntity(User user) {
+      UserJpaEntity mapToJpaEntity(User user) {
         return new UserJpaEntity(
-                user.getPhoneNumber().getPhoneNumberText(),
+                user.getEmail().getEmailText(),
                 user.getUserName().getUserNameText(),
-                user.getPassword().getPasswordText(),
                 user.getUserGrade(),
-                user.getEmail().getEmailText()
+                user.getPassword().getPasswordText(),
+                user.getPhoneNumber().getPhoneNumberText()
         );
     }
 }

@@ -1,6 +1,9 @@
 package com.express.adapter.output.persistence.jpa.user;
 
+import com.express.adapter.output.persistence.jpa.base.BaseTimeEntity;
+import com.express.domain.model.user.User;
 import com.express.domain.model.user.UserGrade;
+import com.fasterxml.jackson.databind.ser.Serializers;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -19,41 +22,50 @@ import org.springframework.data.domain.AbstractAggregateRoot;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "user")
-public class UserJpaEntity {
+public class UserJpaEntity extends BaseTimeEntity {
     //PK
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     //JPA 에서 기본키 값을 자동으로 생성할 때 사용하는 옵션
     private Long id;
 
-    @Column
     //이메일
+    @Column(name = "email")
     private String email;
 
-    @Column
+    @Column(name = "username")
     private String username;
-    @Column
     //유저등급
+    @Column(name = "user_grade")
     private UserGrade userGrade;
-    @Column
     //패스워드
+    @Column(name = "password")
     private String password;
-    @Column
+
     //전화번호
+    @Column(name = "phone_number")
     private String phoneNumber;
 
-    public UserJpaEntity(String phoneNumber,String username ,String password, UserGrade userGrade, String email) {
-        this.phoneNumber = phoneNumber;
-        this.username = username;
-        this.password = password;
-        this.userGrade = userGrade;
+    public UserJpaEntity(String email, String username, UserGrade userGrade, String password, String phoneNumber) {
+
         this.email = email;
+        this.username = username;
+        this.userGrade = userGrade;
+        this.password = password;
+        this.phoneNumber = phoneNumber;
     }
 
+    public void modifyUserInfo(User user){
+        this.email = user.getEmail().getEmailText();
+        this.userGrade = user.getUserGrade();
+        this.phoneNumber = user.getPhoneNumber().getPhoneNumberText();
+        this.username = user.getUserName().getUserNameText();
+    }
     //회사
     //private Company company;
 
     //권한 JSON
     //private String userAuth;
+
 
 }
