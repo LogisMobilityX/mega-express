@@ -5,13 +5,13 @@ public class Email {
     private final String email;
 
     public Email(String email) {
-        if (!validEmailPattern(email)){
+        if (!ValidEmailPattern(email)){
             throw new RuntimeException();
         }
         this.email = email;
     }
 
-    public boolean validEmailPattern(String email){
+    public boolean ValidEmailPattern(String email){
         return email.matches(EMAIL_REGEX);
     }
 

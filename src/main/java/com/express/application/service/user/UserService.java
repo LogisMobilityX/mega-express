@@ -2,10 +2,7 @@ package com.express.application.service.user;
 
 
 import com.express.adapter.common.UseCase;
-import com.express.adapter.input.rest.user.request.ModifyUserRequest;
 import com.express.adapter.input.rest.user.response.ReadUserResponse;
-import com.express.adapter.output.persistence.jpa.user.UserJpaEntity;
-import com.express.adapter.output.persistence.jpa.user.UserReadMapper;
 import com.express.application.port.input.user.*;
 import com.express.application.port.output.email.EmailSender;
 import com.express.application.port.output.inmemory.redis.CacheProcessor;
@@ -14,15 +11,13 @@ import com.express.application.port.output.user.UserProcessor;
 import com.express.application.port.output.user.UserReader;
 import com.express.application.service.messaging.MessagePublisher;
 import com.express.domain.model.user.*;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Map;
-import java.util.Optional;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
-
-import static org.springframework.data.jpa.domain.AbstractPersistable_.id;
 
 /*
  * 유저 생성
@@ -50,6 +45,7 @@ public class UserService implements UserProcessorUseCase,
 
 
     @Override
+    @Transactional
     public void joinUser(JoinUserCommand joinUserRequest) {
         //user 객체로 변환
         User user = User.builder()
@@ -64,6 +60,7 @@ public class UserService implements UserProcessorUseCase,
     }
 
     @Override
+    @Transactional
     public void modifyUserInfo(Long userId, ModifyUserCommand modifyUserCommand) {
         //
         //user 객체로 변환
@@ -78,6 +75,7 @@ public class UserService implements UserProcessorUseCase,
     }
 
     @Override
+    @Transactional
     public boolean withdrawalUser(Long userId, WithdrawalUserCommand withdrawalUserCommand) {
         //id로 유저 정보 조회
         User user = userReader.UserInfoById(userId);
@@ -129,6 +127,7 @@ public class UserService implements UserProcessorUseCase,
     @Override
     public ReadUserResponse findById(Long userId) {
         User user = userReader.UserInfoById(userId);
+
         return ReadUserResponse.builder()
                 .email(user.getEmail().getEmailText())
                 .username(user.getUserName().getUserNameText())

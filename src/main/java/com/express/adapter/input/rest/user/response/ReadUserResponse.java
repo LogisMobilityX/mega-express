@@ -1,7 +1,9 @@
 package com.express.adapter.input.rest.user.response;
 
 import lombok.Builder;
+import lombok.Getter;
 
+@Getter
 public class ReadUserResponse {
     private String email;
     private String userGrade;

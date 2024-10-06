@@ -2,7 +2,7 @@ package com.express.domain.model.user;
 
 public class Password {
     private final String password;
-    private static final String PASSWORD_REGEX = "^(?=.*[A-Z])(?=.*[a-z])(?=.*\\\\d)(?=.*[!@#$%^&*(),.?\\\":{}|<>]).{8,}$";
+    private static final String PASSWORD_REGEX = "^(?=.*[A-Z])(?=.*[a-z])(?=.*\\\\d)(?=.*[@$!%*?&])[A-Za-z\\\\d@$!%*?&]{8,}$";
     public Password(String password) {
         if (ValidPasswordPattern(password)){
             throw new RuntimeException();

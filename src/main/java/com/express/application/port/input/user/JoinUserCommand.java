@@ -10,8 +10,8 @@ import lombok.Getter;
 public class JoinUserCommand {
     private Email email;
     private UserName username;
-    private UserGrade userGrade;
     private Password password;
+    private UserGrade userGrade;
     private PhoneNumber phoneNumber;
     private boolean certifiedEmail;
 
