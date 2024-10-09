@@ -27,7 +27,7 @@ public class CompanyService implements CompanyUseCase {
 
     @Override
     public Company readCompany(ReadCompanyQuery query) {
-트        return companyReader.readCompany(query)
+        return companyReader.readCompany(query)
             .orElseThrow(CompanyNotFoundException::new);
     }
 
