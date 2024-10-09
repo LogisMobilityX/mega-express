@@ -27,7 +27,8 @@ public class CompanyService implements CompanyUseCase {
 
     @Override
     public Company readCompany(ReadCompanyQuery query) {
-        return companyReader.readCompany(query).orElseThrow(CompanyNotFoundException::new);
+트        return companyReader.readCompany(query)
+            .orElseThrow(CompanyNotFoundException::new);
     }
 
     @Transactional
@@ -35,7 +36,7 @@ public class CompanyService implements CompanyUseCase {
     public Company registerCompany(RegisterCompanyCommand command, Long userId) {
 
         companyReader.readByBusinessNumber(command.businessNumber())
-            .orElseThrow(() -> new RuntimeException("Erro"));
+            .orElseThrow(CompanyNotFoundException::new);
 
         String businessNumberFilePath = fileUploader.upload(command.businessNumberFile().getFile());
         command.businessNumberFile().uploadComplete(businessNumberFilePath);
@@ -50,9 +51,20 @@ public class CompanyService implements CompanyUseCase {
     }
 
     @Override
-    public boolean modifyCompany(ModifyCompanyCommand command) {
-        return false;
-    }
+    public Company modifyCompany(ModifyCompanyCommand command) {
+        Company company = companyReader.readByCompanyId(command.companyId())
+            .orElseThrow(CompanyNotFoundException::new);
 
+        String businessNumberFilePath = fileUploader.upload(command.businessNumberFile().getFile());
+        command.businessNumberFile().uploadComplete(businessNumberFilePath);
+
+        Company updatedCompany = company.update(command);
+        companyProcessor.updateCompanyInfo(updatedCompany);
+
+        messagePublisher.publish(updatedCompany.listEvents());
+        updatedCompany.clearEvents();
+
+        return updatedCompany;
+    }
 
 }

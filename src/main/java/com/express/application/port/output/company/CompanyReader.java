@@ -11,4 +11,6 @@ public interface CompanyReader {
     Optional<Company> readByBusinessNumber(BusinessNumber businessNumber);
 
     Optional<Company> readCompany(ReadCompanyQuery query);
+
+    Optional<Company> readByCompanyId(Long companyId);
 }

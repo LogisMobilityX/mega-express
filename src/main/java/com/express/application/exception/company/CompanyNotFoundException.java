@@ -1,5 +1,6 @@
 package com.express.application.exception.company;
 
+
 import com.express.application.exception.common.NotFoundException;
 
 public class CompanyNotFoundException extends NotFoundException {

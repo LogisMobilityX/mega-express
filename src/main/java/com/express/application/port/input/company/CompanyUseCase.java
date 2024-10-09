@@ -8,8 +8,6 @@ public interface CompanyUseCase {
 
     Company registerCompany(RegisterCompanyCommand command, Long userId);
 
-    boolean modifyCompany(ModifyCompanyCommand command);
-
-    boolean modifyRejectedCompany(ModifyCompanyCommand command);
+    Company modifyCompany(ModifyCompanyCommand command);
 
 }

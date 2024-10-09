@@ -1,5 +1,6 @@
 package com.express.adapter.output.persistence.jpa.company;
 
+import com.express.application.port.input.company.ReadCompanyQuery;
 import com.express.application.port.input.company.RegisterCompanyCommand;
 import com.express.application.port.output.company.CompanyProcessor;
 import com.express.application.port.output.company.CompanyReader;
@@ -26,6 +27,10 @@ public class CompanyPersistenceAdapter implements CompanyReader, CompanyProcesso
 
     }
 
+    @Override
+    public void updateCompanyInfo(Company company) {
+
+    }
 
 //    @Override
 //    public Optional<Company> readById(String id) {
@@ -34,6 +39,16 @@ public class CompanyPersistenceAdapter implements CompanyReader, CompanyProcesso
 
     @Override
     public Optional<Company> readByBusinessNumber(BusinessNumber businessNumber) {
+        return Optional.empty();
+    }
+
+    @Override
+    public Optional<Company> readCompany(ReadCompanyQuery query) {
+        return Optional.empty();
+    }
+
+    @Override
+    public Optional<Company> readByCompanyId(Long companyId) {
         return Optional.empty();
     }
 }
