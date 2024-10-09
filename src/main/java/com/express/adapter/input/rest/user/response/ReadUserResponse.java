@@ -11,6 +11,8 @@ public class ReadUserResponse {
     private String phoneNumber;
     private boolean certifiedEmail;
 
+    //추후 회사 정보 추가
+
     @Builder
     public ReadUserResponse(String email,
                             String userGrade,

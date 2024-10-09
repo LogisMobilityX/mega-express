@@ -1,28 +1,28 @@
 package com.express.adapter.input.rest.user;
 
+import com.express.adapter.input.rest.responseTemplate.CustomResponse;
+import com.express.adapter.input.rest.user.response.AuthenticatedResponse;
 import com.express.application.port.input.user.UserAuthUseCase;
 import com.express.adapter.input.rest.user.request.CertifiedEmailRequest;
 import com.express.adapter.input.rest.user.request.LoginUserRequest;
 import com.express.adapter.common.WebAdapter;
 import com.express.domain.model.user.Email;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @WebAdapter
-@RestController(value = "/v1/api/user/auth")
+@RestController
+@RequestMapping(value = "/v1/api/user/auth")
 @RequiredArgsConstructor
 public class UserAuthController {
 
     private final UserAuthUseCase userAuthUseCase;
-    @PostMapping(path = "/login")
-    public void loginUser(LoginUserRequest loginUserRequest){
-        //validate
-        //로그인
-
+    @PostMapping( "/login")
+    public AuthenticatedResponse loginUser(@RequestBody LoginUserRequest loginUserRequest){
+        AuthenticatedResponse login = userAuthUseCase.login(loginUserRequest.toLoginUserCommand());
+        return login;
     }
 
     @PostMapping(path = "/logout")
@@ -44,7 +44,6 @@ public class UserAuthController {
         userAuthUseCase.sendCertifiedEmail(Email.from(email));
         return ResponseEntity.noContent().build();
     }
-
 
     /*
      * 이메일 인증 로직

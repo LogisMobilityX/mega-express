@@ -1,7 +1,9 @@
 package com.express.adapter.input.rest.responseTemplate;
 
-import java.time.LocalDateTime;
+import lombok.Getter;
 
+import java.time.LocalDateTime;
+@Getter
 public class CustomResponse<T> {
     private LocalDateTime dateTime;
     private int statusCode;

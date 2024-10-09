@@ -11,7 +11,8 @@ public class Email {
         this.email = email;
     }
 
-    public boolean ValidEmailPattern(String email){
+    public static boolean ValidEmailPattern(String email){
+
         return email.matches(EMAIL_REGEX);
     }
 
@@ -20,6 +21,7 @@ public class Email {
     }
 
     public static Email from(String email){
+
         return new Email(email);
     }
 

@@ -15,7 +15,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @WebAdapter
-@RestController(value = "/v1/api/user")
+@RestController
+@RequestMapping(value = "/v1/api/user")
 @RequiredArgsConstructor
 public class UserController {
     private final UserReadUseCase userReadUseCase;
@@ -32,7 +33,7 @@ public class UserController {
      *
      */
     @GetMapping(value = "/info/{userId}")
-    public Object readUser(@PathVariable Long userId){
+    public CustomResponse<ReadUserResponse> readUser(@PathVariable Long userId){
         ReadUserResponse userResponse = userReadUseCase.findById(userId);
         return new CustomResponse<>(HttpStatus.OK.value(),"ResponseCode",userResponse);
         //유저 아이디 검증

@@ -11,5 +11,5 @@ import java.util.Optional;
 public interface UserSpringDataJpaRepository extends JpaRepository<UserJpaEntity, Long> {
 //    @Query(nativeQuery = true, value = "")
 //    Optional<UserJpaEntity> findPasswordById(String email);
-
+        UserJpaEntity findByEmail(String email);
 }

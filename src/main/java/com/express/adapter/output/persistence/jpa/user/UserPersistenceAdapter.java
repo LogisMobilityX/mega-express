@@ -51,17 +51,6 @@ public class UserPersistenceAdapter implements UserReader, UserProcessor, UserAu
         }
     }
 
-
-    @Override
-    public Map<String, Object> login(String email, String password) {
-        return Map.of();
-    }
-
-    @Override
-    public String logOut(String email, String token) {
-        return "";
-    }
-
     @Override
     public Map<String, Object> addAuthorization(String email, String token, Map<String, Object> authorization) {
         return Map.of();
@@ -80,7 +69,8 @@ public class UserPersistenceAdapter implements UserReader, UserProcessor, UserAu
 
     @Override
     public User UserInfoByEmail(String email) {
-        return null;
+        User user = userReadMapper.mapToUserModel(userSpringDataJpaRepository.findByEmail(email));
+        return user;
     }
 
     @Override

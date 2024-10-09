@@ -14,6 +14,7 @@ import com.express.domain.model.user.*;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Map;
 import java.util.Random;
@@ -32,16 +33,12 @@ import java.util.concurrent.TimeUnit;
 @UseCase
 @RequiredArgsConstructor
 public class UserService implements UserProcessorUseCase,
-        UserReadUseCase,
-        UserAuthUseCase {
+        UserReadUseCase{
     //유저 관련
     private final UserProcessor userProcessor;
-    private final UserAuthProcessor userAuthProcessor;
     private final UserReader userReader;
-
-    private final CacheProcessor cacheProcessor;
+    private final PasswordEncoder passwordEncoder;
     private final MessagePublisher messagePublisher;
-    private final EmailSender emailSender;
 
 
     @Override
@@ -52,8 +49,14 @@ public class UserService implements UserProcessorUseCase,
                 .userId(UserId.from(0L))
                 .email(Email.from(joinUserRequest.getEmail().getEmailText()))
                 .userName(UserName.from(joinUserRequest.getUsername().getUserNameText()))
-                .userGrade(joinUserRequest.getUserGrade())
-                .password(Password.from(joinUserRequest.getPassword().getPasswordText()))
+                .userGrade(
+                        joinUserRequest.getUserGrade()
+                )
+                .password(
+                        Password.from(
+                                passwordEncoder.encode(joinUserRequest.getPassword().getPasswordText())
+                        )
+                )
                 .phoneNumber(PhoneNumber.from(joinUserRequest.getPhoneNumber().getPhoneNumberText()))
                 .build();
         userProcessor.saveUser(user);
@@ -91,33 +94,6 @@ public class UserService implements UserProcessorUseCase,
         }
     }
 
-    @Override
-    public void sendCertifiedEmail(Email email) {
-
-        //인증번호 생성
-        int authorizationCode = randomAuthorizationCode();
-
-        // 보내기 전 redis에 1차 저장
-        cacheProcessor.setValues(email.getEmailText(), authorizationCode, TimeUnit.SECONDS, 300);
-
-        //이메일 전송
-        emailSender.sendCertifiedCode(email.getEmailText(), authorizationCode);
-
-        log.info("Succeeded to send Email");
-
-    }
-
-    @Override
-    public boolean certifiedEmail(CertifiedEmailCommand certifiedEmailRequest) {
-        /*
-        레디스에서 Email값으로 인증 번호 가지고 와서 요청으로 받은 코드와 비교
-        다르면 false
-        같으면 true
-         */
-        Object value = cacheProcessor.getValue(certifiedEmailRequest.getEmail().getEmailText());
-        log.info("Certified code in redis : {}", value);
-        return certifiedEmailRequest.compareCertifiedCode(value);
-    }
 
     @Override
     public ReadUserResponse findByEmail(String email) {
@@ -136,22 +112,5 @@ public class UserService implements UserProcessorUseCase,
                 .certifiedEmail(true)
                 .build();
     }
-
-    @Override
-    public Map<String, Object> login() {
-        return Map.of();
-    }
-
-    @Override
-    public String logOut() {
-        return "";
-    }
-
-    private int randomAuthorizationCode() {
-        Random random = new Random();
-        int authCode = random.nextInt(900000) + 100000;
-        return authCode;
-    }
-
 
 }
