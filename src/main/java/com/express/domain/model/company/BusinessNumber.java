@@ -23,4 +23,7 @@ public class BusinessNumber {
         return new BusinessNumber(value);
     }
 
+    public String getNumber() {
+        return number;
+    }
 }

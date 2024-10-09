@@ -25,6 +25,8 @@ public class CompanyPersistenceAdapter implements CompanyReader, CompanyProcesso
     @Override
     public void register(Company company) {
 
+
+        companyJpaRepository.save();
     }
 
     @Override

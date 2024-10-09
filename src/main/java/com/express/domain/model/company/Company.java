@@ -12,8 +12,8 @@ import lombok.Getter;
 @Getter
 public class Company extends EventBase {
 
-    private final Owner owner;
-
+    private final Long ownerId;
+    private String ownerName;
     private final Long companyId;
     private String companyName;
 
@@ -26,9 +26,10 @@ public class Company extends EventBase {
 
     @Builder
     private Company(
-        Owner owner, Long companyId, String companyName, CompanyCategory companyCategory, LocalDate companyStartDate, CompanyCode companyCode,  BusinessNumber businessNumber,
+        Long ownerId, String ownerName, Long companyId, String companyName, CompanyCategory companyCategory, LocalDate companyStartDate, CompanyCode companyCode,  BusinessNumber businessNumber,
         BusinessNumberFile businessNumberFile) {
-        this.owner = owner;
+        this.ownerId = ownerId;
+        this.ownerName = ownerName;
         this.companyId = companyId;
         this.companyName = companyName;
         this.companyCategory = companyCategory;
