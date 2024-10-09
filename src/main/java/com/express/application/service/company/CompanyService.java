@@ -1,5 +1,6 @@
 package com.express.application.service.company;
 
+import com.express.application.exception.company.CompanyNotFoundException;
 import com.express.application.port.input.company.CompanyUseCase;
 import com.express.application.port.input.company.ModifyCompanyCommand;
 import com.express.application.port.input.company.ReadCompanyQuery;
@@ -11,8 +12,6 @@ import com.express.application.port.output.messaging.MessagePublisher;
 import com.express.domain.model.company.Company;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Isolation;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
@@ -28,17 +27,44 @@ public class CompanyService implements CompanyUseCase {
 
     @Override
     public Company readCompany(ReadCompanyQuery query) {
-        return null;
+        return companyReader.readCompany(query)
+            .orElseThrow(CompanyNotFoundException::new);
+    }
+
+    @Transactional
+    @Override
+    public Company registerCompany(RegisterCompanyCommand command, Long userId) {
+
+        companyReader.readByBusinessNumber(command.businessNumber())
+            .orElseThrow(CompanyNotFoundException::new);
+
+        String businessNumberFilePath = fileUploader.upload(command.businessNumberFile().getFile());
+        command.businessNumberFile().uploadComplete(businessNumberFilePath);
+
+        Company newCompany = Company.register(command);
+        companyProcessor.register(newCompany);
+
+        messagePublisher.publish(newCompany.listEvents());
+        newCompany.clearEvents();
+
+        return newCompany;
     }
 
     @Override
-    public boolean registerCompany(RegisterCompanyCommand command) {
+    public Company modifyCompany(ModifyCompanyCommand command) {
+        Company company = companyReader.readByCompanyId(command.companyId())
+            .orElseThrow(CompanyNotFoundException::new);
 
-        return false;
+        String businessNumberFilePath = fileUploader.upload(command.businessNumberFile().getFile());
+        command.businessNumberFile().uploadComplete(businessNumberFilePath);
+
+        Company updatedCompany = company.update(command);
+        companyProcessor.updateCompanyInfo(updatedCompany);
+
+        messagePublisher.publish(updatedCompany.listEvents());
+        updatedCompany.clearEvents();
+
+        return updatedCompany;
     }
 
-    @Override
-    public boolean modifyCompany(ModifyCompanyCommand command) {
-        return false;
-    }
 }
