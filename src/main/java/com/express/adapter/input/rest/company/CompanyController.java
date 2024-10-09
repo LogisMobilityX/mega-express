@@ -18,7 +18,8 @@ public class CompanyController {
     @PostMapping
     public ResponseEntity<CustomResponse> createCompany(@RequestBody CompanyCreateRequest request){
 
-        companyUseCase.registerCompany(request.toCommand()); //model -> command mapper 추가
+        Long userId = 1L;
+        companyUseCase.registerCompany(request.toCommand(),userId); //model -> command mapper 추가
 
         return null;
     }

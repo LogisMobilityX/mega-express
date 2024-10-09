@@ -2,10 +2,10 @@ package com.express.domain.model.company;
 
 import com.express.application.port.input.company.RegisterCompanyCommand;
 import com.express.domain.model.EventBase;
-import java.time.LocalDateTime;
+import com.express.domain.model.company.event.CompanyRegisterEvent;
+import java.time.LocalDate;
 import lombok.Builder;
 import lombok.Getter;
-import org.springframework.web.multipart.MultipartFile;
 
 @Getter
 public class Company extends EventBase {
@@ -14,22 +14,17 @@ public class Company extends EventBase {
     private final String companyName;
 
     private final CompanyCategory companyCategory;
-    private final LocalDateTime companyStartDate;
+    private final LocalDate companyStartDate;
 
     private final CompanyCode companyCode;
     private final BusinessNumber businessNumber;
     private final BusinessNumberFile businessNumberFile;
-    private final Status status;
-
-    public static Company registerBy(RegisterCompanyCommand command){
-        return Company.builder()
-            .build();
-    }
+    private final RegisterStatus registerStatus;
 
     @Builder
     private Company(
-        Owner owner, String companyName, CompanyCategory companyCategory, LocalDateTime companyStartDate, CompanyCode companyCode,  BusinessNumber businessNumber,
-        BusinessNumberFile businessNumberFile, Status status) {
+        Owner owner, String companyName, CompanyCategory companyCategory, LocalDate companyStartDate, CompanyCode companyCode,  BusinessNumber businessNumber,
+        BusinessNumberFile businessNumberFile, RegisterStatus registerStatus) {
         this.owner = owner;
         this.companyName = companyName;
         this.companyCategory = companyCategory;
@@ -37,10 +32,19 @@ public class Company extends EventBase {
         this.companyCode = companyCode;
         this.businessNumber = businessNumber;
         this.businessNumberFile = businessNumberFile;
-        this.status = status;
+        this.registerStatus = registerStatus;
     }
 
     public static Company register(RegisterCompanyCommand command) {
-        return null;
+        Company newCompany = Company.builder()
+            .companyName(command.companyName())
+            .companyCategory(command.companyCategory())
+            .businessNumberFile(command.businessNumberFile())
+            .businessNumber(command.businessNumber())
+            .companyStartDate(command.companyStartDate())
+            .build();
+
+        newCompany.getDomainEventList().add(new CompanyRegisterEvent());
+        return newCompany;
     }
 }

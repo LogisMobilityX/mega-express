@@ -1,5 +1,6 @@
 package com.express.application.service.company;
 
+import com.express.application.exception.company.CompanyNotFoundException;
 import com.express.application.port.input.company.CompanyUseCase;
 import com.express.application.port.input.company.ModifyCompanyCommand;
 import com.express.application.port.input.company.ReadCompanyQuery;
@@ -26,11 +27,12 @@ public class CompanyService implements CompanyUseCase {
 
     @Override
     public Company readCompany(ReadCompanyQuery query) {
-        return null;
+        return companyReader.readCompany(query).orElseThrow(CompanyNotFoundException::new);
     }
 
+    @Transactional
     @Override
-    public Company registerCompany(RegisterCompanyCommand command) {
+    public Company registerCompany(RegisterCompanyCommand command, Long userId) {
 
         companyReader.readByBusinessNumber(command.businessNumber())
             .orElseThrow(() -> new RuntimeException("Erro"));
@@ -52,8 +54,5 @@ public class CompanyService implements CompanyUseCase {
         return false;
     }
 
-    @Override
-    public boolean modifyRejectedCompany(ModifyCompanyCommand command) {
-        return false;
-    }
+
 }

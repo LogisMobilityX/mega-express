@@ -1,6 +1,6 @@
 package com.express.domain.model.company;
 
-public enum Status {
+public enum RegisterStatus {
 
 
     ACCEPT,REJECT,PENDING

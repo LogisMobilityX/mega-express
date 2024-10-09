@@ -1,7 +1,13 @@
 package com.express.domain.model.company.event;
 
 import com.express.domain.model.EventBase;
+import com.express.infrasturcture.event.DomainEvent;
+import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
-public class CompanyRegisterEvent extends EventBase {
+
+@AllArgsConstructor
+@RequiredArgsConstructor
+public class CompanyRegisterEvent implements DomainEvent {
 
 }

@@ -2,12 +2,14 @@ package com.express.adapter.output.file.s3;
 
 import java.nio.file.Paths;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectResponse;
 import software.amazon.awssdk.services.s3.model.S3Exception;
 
+@Component
 @RequiredArgsConstructor
 public class S3Uploader {
 
