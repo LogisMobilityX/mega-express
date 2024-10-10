@@ -7,6 +7,7 @@ import com.express.adapter.input.rest.user.request.CertifiedEmailRequest;
 import com.express.adapter.input.rest.user.request.LoginUserRequest;
 import com.express.adapter.common.WebAdapter;
 import com.express.domain.model.user.Email;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,6 +25,7 @@ public class UserAuthController {
         AuthenticatedResponse login = userAuthUseCase.login(loginUserRequest.toLoginUserCommand());
         return login;
     }
+
 
     @PostMapping(path = "/logout")
     public void logoutUser(){

@@ -10,6 +10,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
@@ -41,6 +42,7 @@ public class SecurityAdapter implements SecurityProcessor{
     @Value("${jwt.token.refresh-expiration-time}")
     private long refreshExpirationTime;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
+    private final RedisTemplate<String, String> redisTemplate;
     private final UserReader userReader;
     private static final String BEARER = "Bearer";
 
@@ -76,12 +78,14 @@ public class SecurityAdapter implements SecurityProcessor{
     @Override
     public String createRefreshToken(String email) {
         log.info("createRefreshToken : " + email + " || " + LocalDateTime.now());
-        return Jwts.builder()
+        String refreshToken = Jwts.builder()
                 .setSubject(email)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + refreshExpirationTime))
                 .signWith(SignatureAlgorithm.HS256, secretKey)
                 .compact();
+
+        return refreshToken;
     }
 
     @Override

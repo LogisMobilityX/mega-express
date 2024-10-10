@@ -39,6 +39,11 @@ public class UserController {
         //유저 아이디 검증
     }
 
+
+    @PostMapping("/check")
+    public CustomResponse<String> check(@RequestBody String ee){
+        return new CustomResponse<>(HttpStatus.OK.value(),"ResponseCode",ee);
+    }
     @DeleteMapping(value = "/withdrawal")
     public void deleteUser(@RequestBody WithdrawalUserRequest withdrawalUserRequest){
         //로그인 된 유저로 변경
