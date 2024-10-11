@@ -66,12 +66,12 @@ public class CompanyJpaEntity {
         return CompanyJpaEntity.builder()
             .ownerId(company.getOwnerId())
             .ownerName(company.getOwnerName())
-            .companyCode(c)
+            .companyCode(company.getCompanyCode().getCode())
             .companyName(company.getCompanyName())
-            .businessNumberPath()
+            .businessNumberPath(company.getBusinessNumberFile().getFilePath())
             .businessNumber(company.getBusinessNumber().getNumber())
-            .companyStartDate()
-            .companyCategory()
+            .companyStartDate(company.getCompanyStartDate())
+            .companyCategory(CompanyCategory.fromString(company.getCompanyCategory().name()))
             .build();
     }
 }

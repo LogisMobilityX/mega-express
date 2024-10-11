@@ -2,7 +2,9 @@ package com.express.domain.model.company;
 
 import java.security.SecureRandom;
 import java.util.stream.Collectors;
+import lombok.Getter;
 
+@Getter
 public class CompanyCode {
 
     private static final String ALPHA_NUMERIC_STRING = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
@@ -23,4 +25,5 @@ public class CompanyCode {
             .map(Object::toString)
             .collect(Collectors.joining());
     }
+
 }

@@ -24,12 +24,20 @@ public class CompanyCreateRequest {
     private MultipartFile businessNumberFile;
 
     public RegisterCompanyCommand toCommand(){
-//        return null;
-        return RegisterCompanyCommand
-            .builder()
+        return RegisterCompanyCommand.builder()
             .companyName(companyName)
             .businessNumber(BusinessNumber.from(businessNumber))
             .businessNumberFile(BusinessNumberFile.from(businessNumberFile))
+            .companyCategory(CompanyCategory.from(companyCategory))
+            .companyStartDate(companyStartDate)
+            .build();
+    }
+
+    public RegisterCompanyCommand toCommand(String filePath){
+        return RegisterCompanyCommand.builder()
+            .companyName(companyName)
+            .businessNumber(BusinessNumber.from(businessNumber))
+            .businessNumberFile(BusinessNumberFile.from(filePath))
             .companyCategory(CompanyCategory.from(companyCategory))
             .companyStartDate(companyStartDate)
             .build();
