@@ -2,7 +2,6 @@ package com.express.domain.model.user;
 
 
 import com.express.domain.model.EventBase;
-import com.express.domain.model.user.event.UserCreateEvent;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

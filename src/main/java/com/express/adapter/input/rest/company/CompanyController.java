@@ -1,8 +1,9 @@
 package com.express.adapter.input.rest.company;
 
-import com.express.adapter.input.rest.common.CustomResponse;
-import com.express.adapter.input.rest.company.model.CompanyCreateModel;
+import com.express.adapter.input.rest.company.request.CompanyCreateRequest;
+import com.express.adapter.input.rest.company.response.CompanyCreateResponse;
 import com.express.application.port.input.company.CompanyUseCase;
+import com.express.domain.model.company.Company;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,9 +17,13 @@ public class CompanyController {
 
 
     @PostMapping
-    public ResponseEntity<CustomResponse> createCompany(@RequestBody CompanyCreateModel model){
-        companyUseCase.registerCompany(model) //model -> command mapper 추가
+    public ResponseEntity<CompanyCreateResponse> createCompany(@RequestBody CompanyCreateRequest request){
 
-        return null;
+        Long userId = 1L;
+
+        Company registerCompany = companyUseCase.registerCompany(request.toCommand(), userId);
+
+
+        return ResponseEntity.ok().body(CompanyCreateResponse.from(registerCompany));
     }
 }
