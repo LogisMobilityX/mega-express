@@ -41,8 +41,11 @@ public class Company extends EventBase {
 
     public static Company register(RegisterCompanyCommand command) {
         Company newCompany = Company.builder()
+            .ownerId(command.ownerId())
+            .ownerName(command.ownerName())
             .companyName(command.companyName())
             .companyCategory(command.companyCategory())
+            .companyCode(CompanyCode.generate())
             .businessNumberFile(command.businessNumberFile())
             .businessNumber(command.businessNumber())
             .companyStartDate(command.companyStartDate())
