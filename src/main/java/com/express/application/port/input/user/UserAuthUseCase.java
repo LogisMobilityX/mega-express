@@ -11,6 +11,8 @@ public interface UserAuthUseCase {
 
     AuthenticatedResponse login(LoginUserCommand loginUserCommand);
 
+    String reissueAccessToken(String refreshToken);
+
     String logOut();
     void sendCertifiedEmail(Email email);
 

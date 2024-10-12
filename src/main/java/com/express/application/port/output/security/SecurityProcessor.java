@@ -8,11 +8,11 @@ import org.springframework.security.core.GrantedAuthority;
 import java.util.Collection;
 
 public interface SecurityProcessor {
-    TokenInfo generateToken(String email, Collection<? extends GrantedAuthority> authorities);
-    String createAccessToken(String email, String authorities);
-    String createRefreshToken(String email);
+    TokenInfo generateToken(Authentication authentication);
+    String createAccessToken(Authentication authentication);
+    String createRefreshToken(Authentication authentication);
 
-    boolean validateToken(String email);
+    boolean validateToken(String token);
     String getEmailFromAccessToken(String accessToken);
 
     Authentication getAuthentication(String token);

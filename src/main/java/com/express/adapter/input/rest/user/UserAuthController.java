@@ -7,6 +7,7 @@ import com.express.adapter.input.rest.user.request.CertifiedEmailRequest;
 import com.express.adapter.input.rest.user.request.LoginUserRequest;
 import com.express.adapter.common.WebAdapter;
 import com.express.domain.model.user.Email;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -25,7 +26,18 @@ public class UserAuthController {
         AuthenticatedResponse login = userAuthUseCase.login(loginUserRequest.toLoginUserCommand());
         return login;
     }
+    @GetMapping(path = "/reissue")
+    public CustomResponse<String> reissueAccessToken(HttpServletRequest request){
+        String bearerToken = request.getHeader("Authorization-refresh");
+        String refreshToken = "";
 
+        if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
+            refreshToken = bearerToken.substring(7);
+        }
+
+        String reissueAccessToken  = userAuthUseCase.reissueAccessToken(refreshToken);
+        return new CustomResponse<>(HttpStatus.OK.value(),HttpStatus.OK.getReasonPhrase(),reissueAccessToken);
+    }
 
     @PostMapping(path = "/logout")
     public void logoutUser(){

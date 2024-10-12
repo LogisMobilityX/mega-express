@@ -15,6 +15,8 @@ import com.express.domain.model.user.SecurityCustomUser;
 import com.express.domain.model.user.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -22,10 +24,15 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
+import static org.springframework.util.ObjectUtils.isEmpty;
+
 @Slf4j
 @UseCase
 @RequiredArgsConstructor
 public class UserAuthService implements UserAuthUseCase, UserDetailsService {
+    @Value("${jwt.token.access-expiration-time}")
+    private long accessExpirationTime;
+
     private final UserReader userReader;
     private final SecurityProcessor securityProcessor;
     private final CacheProcessor cacheProcessor;
@@ -37,12 +44,39 @@ public class UserAuthService implements UserAuthUseCase, UserDetailsService {
                 loginUserCommand.getEmail().getEmailText(),
                 loginUserCommand.getPassword().getPasswordText());
 
+        //refresh token 저장
+        cacheProcessor.setValues(
+                loginUserCommand.getEmail().getEmailText()
+                ,tokenInfo.getRefreshToken()
+                ,TimeUnit.MILLISECONDS
+                ,accessExpirationTime
+        );
+
         User user = userReader.UserInfoByEmail(loginUserCommand.getEmail().getEmailText());
 
         return AuthenticatedResponse.builder()
                 .tokenInfo(tokenInfo)
                 .user(user)
                 .build();
+    }
+
+    @Override
+    public String reissueAccessToken(String refreshToken) {
+        if (securityProcessor.validateToken(refreshToken)){
+            Authentication authentication = securityProcessor.getAuthentication(refreshToken);
+            String getRefreshTokenInCache = String.valueOf(cacheProcessor.getValue(authentication.getName()));
+            //레디스에 저장된 토큰값과 일치하는지 검증
+            if (!isEmpty(getRefreshTokenInCache) && refreshToken.equals(getRefreshTokenInCache)){
+                //일치하면 엑세스토큰 재발급
+                return securityProcessor.createAccessToken(authentication);
+                //securityProcessor.createAccessToken()
+            }else{
+                throw new RuntimeException("Refresh token mismatch");
+            }
+            //일치하지 않으면 예외
+        }else{
+            throw new RuntimeException("Token Expires,Requires login");
+        }
     }
 
     @Override

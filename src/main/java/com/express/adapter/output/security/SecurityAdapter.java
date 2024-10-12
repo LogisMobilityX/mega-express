@@ -18,8 +18,6 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.util.StringUtils;
 
 import java.time.LocalDateTime;
@@ -41,16 +39,17 @@ public class SecurityAdapter implements SecurityProcessor{
 
     @Value("${jwt.token.refresh-expiration-time}")
     private long refreshExpirationTime;
-    private final AuthenticationManagerBuilder authenticationManagerBuilder;
-    private final RedisTemplate<String, String> redisTemplate;
-    private final UserReader userReader;
+
     private static final String BEARER = "Bearer";
 
+    private final AuthenticationManagerBuilder authenticationManagerBuilder;
+
+
+
     @Override
-    public TokenInfo generateToken(String email, Collection<? extends GrantedAuthority> authorities) {
-        String authoritiesToString = authorities.stream().map(GrantedAuthority::getAuthority).collect(Collectors.joining(","));
-        String accessToken = createAccessToken(email, authoritiesToString);
-        String refreshToken = createRefreshToken(email);
+    public TokenInfo generateToken(Authentication authentication) {
+        String accessToken = createAccessToken(authentication);
+        String refreshToken = createRefreshToken(authentication);
         return TokenInfo.builder()
                 .certificateType(BEARER)
                 .accessToken(accessToken)
@@ -59,15 +58,21 @@ public class SecurityAdapter implements SecurityProcessor{
     }
 
     @Override
-    public String createAccessToken(String email, String authorities) {
-        log.info("createAccessToken : " + email + " || " + LocalDateTime.now());
+    public String createAccessToken(Authentication authentication) {
+        Claims claims = Jwts.claims().setSubject(authentication.getName());
+        Date now = new Date();
+        Date expireDate = new Date(now.getTime() + accessExpirationTime);
+
+        log.info("createAccessToken : " + authentication.getName() + " || " + LocalDateTime.now());
+        String authoritiesToString = authentication.getAuthorities()
+                .stream()
+                .map(GrantedAuthority::getAuthority)
+                .collect(Collectors.joining(","));
         return Jwts.builder()
-                //key id
-                .setSubject(email)
-                .claim("auth", authorities)
-                .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + accessExpirationTime))
-                //signature
+                .setClaims(claims)
+                .claim("auth" , authoritiesToString)
+                .setIssuedAt(now)
+                .setExpiration(expireDate)
                 .signWith(SignatureAlgorithm.HS256, secretKey)
                 .compact();
     }
@@ -76,25 +81,41 @@ public class SecurityAdapter implements SecurityProcessor{
     refresh는 access 재발급 용도이기 때문에 따로 JWT Payload에 정보를 추가 할 필요가 없다.
      */
     @Override
-    public String createRefreshToken(String email) {
-        log.info("createRefreshToken : " + email + " || " + LocalDateTime.now());
+    public String createRefreshToken(Authentication authentication) {
+        log.info("createRefreshToken : " + authentication.getName() + " || " + LocalDateTime.now());
+        Claims claims = Jwts.claims().setSubject(authentication.getName());
+        Date now = new Date();
+        Date expireDate = new Date(now.getTime() + refreshExpirationTime);
+        String authoritiesToString = authentication.getAuthorities()
+                .stream()
+                .map(GrantedAuthority::getAuthority)
+                .collect(Collectors.joining(","));
         String refreshToken = Jwts.builder()
-                .setSubject(email)
-                .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + refreshExpirationTime))
+                .setClaims(claims)
+                .setIssuedAt(now)
+                .claim("auth" , authoritiesToString)
+                .setExpiration(expireDate)
                 .signWith(SignatureAlgorithm.HS256, secretKey)
                 .compact();
+
 
         return refreshToken;
     }
 
     @Override
-    public boolean validateToken(String email) {
+    public boolean validateToken(String token) {
         try {
-            Jwts.parser().setSigningKey(secretKey).parseClaimsJws(email);
+            Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
             return true;
-        } catch (JwtException | IllegalArgumentException e) {
-            return false;
+        } catch(ExpiredJwtException e) {
+            log.error("Token Expires");
+            throw new RuntimeException("Token Expires");
+        } catch(JwtException e) {
+            log.error("Invalid Access Token Type");
+            throw new RuntimeException("Invalid Access Token Type");
+        } catch (IllegalArgumentException e) {
+            log.error("Header empty");
+            throw new RuntimeException("Header empty");
         }
     }
 
@@ -165,7 +186,7 @@ public class SecurityAdapter implements SecurityProcessor{
         Authentication authentication = authenticationManagerBuilder.getObject()
                 .authenticate(authenticationToken);
 
-        return generateToken(authentication.getName(),authentication.getAuthorities());
+        return generateToken(authentication);
     }
 
 
