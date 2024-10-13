@@ -1,18 +1,65 @@
 package com.express.adapter.input.rest.responseTemplate;
 
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-public class GlobalExceptionHandler {
+
+@Slf4j
+@RestControllerAdvice(annotations = {RestController.class})
+public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
+
+
     @ExceptionHandler
-    public ResponseEntity<CustomResponse<String>> handleAllException(Exception ex, WebRequest request){
-        CustomResponse<String> errorResponse = new CustomResponse<>(
-                HttpStatus.INTERNAL_SERVER_ERROR.value(),
-                ex.getMessage(),
-                null
+    public ResponseEntity<Object> general(GeneralException e, WebRequest request) {
+        log.info("ASDF");
+        return handleExceptionInternal(e, e.getErrorCode(), request);
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<Object> exception(Exception e, WebRequest request) {
+
+        return handleExceptionInternal(e, ErrorCode.INTERNAL_ERROR, request);
+    }
+
+
+    private ResponseEntity<Object> handleExceptionInternal(Exception e, ErrorCode errorCode,
+                                                           WebRequest request) {
+        return handleExceptionInternal(e, errorCode, HttpHeaders.EMPTY, errorCode.getHttpStatus(),
+                request);
+    }
+
+    private ResponseEntity<Object> handleExceptionInternal(Exception e, ErrorCode errorCode,
+                                                           WebRequest request, String message) {
+        return handleExceptionInternal(e, errorCode, HttpHeaders.EMPTY, errorCode.getHttpStatus(),
+                request, message);
+    }
+
+    private ResponseEntity<Object> handleExceptionInternal(Exception e, ErrorCode errorCode,
+                                                           HttpHeaders headers, HttpStatus status, WebRequest request) {
+        return super.handleExceptionInternal(
+                e,
+                ExceptionResponseDTO.of(errorCode, errorCode.getMessage(e)),
+                headers,
+                status,
+                request
         );
-        return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    private ResponseEntity<Object> handleExceptionInternal(Exception e, ErrorCode errorCode,
+                                                           HttpHeaders headers, HttpStatus status, WebRequest request, String message) {
+        return super.handleExceptionInternal(
+                e,
+                ExceptionResponseDTO.of(errorCode, message),
+                headers,
+                status,
+                request
+        );
     }
 }

@@ -10,6 +10,13 @@ import org.springframework.http.server.ServerHttpResponse;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.HashMap;
+import java.util.Map;
+
+import static org.springframework.util.ObjectUtils.isEmpty;
+
 @ControllerAdvice
 public class CustomResponseBodyAdvice implements ResponseBodyAdvice<Object> {
 
@@ -20,22 +27,26 @@ public class CustomResponseBodyAdvice implements ResponseBodyAdvice<Object> {
     }
 
 
-
     @Override
     public Object beforeBodyWrite(Object body, MethodParameter returnType,
                                   MediaType selectedContentType, Class<? extends HttpMessageConverter<?>> selectedConverterType,
                                   ServerHttpRequest request, ServerHttpResponse response) {
+        int statusCode = 0;
+        //상태코드 세팅
+        boolean errorCheck = body.toString().contains("success");
+        if (errorCheck) {
+            ExceptionResponseDTO responseDTO = (ExceptionResponseDTO) body;
+            String errorMessage = String.valueOf(responseDTO.getMessage());
+            if (responseDTO.getMessage().equals("Cannot invoke \"Object.toString()\" because \"body\" is null")){
+                return new ResultDataResponse<>(true,HttpStatus.OK.value(), "SUCCESS",null);
+            }
+            statusCode = responseDTO.getCode();
 
-        // HTTP 상태 코드 가져오기
-        //response가 HttpServletResponse의 인스턴스인지 확인
-        //HttpServletResponse는 응답의 상태 코드를 가지고 있는 객체이기 떄문에 getStatus() 메서드를 사용해서 상태코드 가져옴
-        int statusCode = response instanceof HttpServletResponse
-                ? ((HttpServletResponse) response).getStatus()
-                : HttpStatus.OK.value();
-
-        // 응답 값을 커스텀 포맷으로 감싸기
-        return new CustomResponse<>(statusCode, "Success", body);
+            return new ResultDataResponse<>(false,statusCode,errorMessage,null);
+        }else {
+            //응답 값을 커스텀 포맷으로 감싸기
+            return new ResultDataResponse<>(body, "SUCCESS");
+        }
     }
-
 
 }
