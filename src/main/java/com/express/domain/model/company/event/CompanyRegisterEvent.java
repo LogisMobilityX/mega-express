@@ -6,7 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 
 
-@AllArgsConstructor
+//@AllArgsConstructor
 @RequiredArgsConstructor
 public class CompanyRegisterEvent implements DomainEvent {
 

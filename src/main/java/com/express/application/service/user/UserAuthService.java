@@ -3,6 +3,8 @@ package com.express.application.service.user;
 import com.express.adapter.common.UseCase;
 import com.express.adapter.common.security.TokenInfo;
 import com.express.adapter.input.rest.user.response.AuthenticatedResponse;
+import com.express.adapter.input.rest.user.response.ReissueAccessTokenResponse;
+import com.express.adapter.input.rest.user.response.UserCertificatedResponse;
 import com.express.application.port.input.user.CertifiedEmailCommand;
 import com.express.application.port.input.user.LoginUserCommand;
 import com.express.application.port.input.user.UserAuthUseCase;
@@ -13,9 +15,11 @@ import com.express.application.port.output.user.UserReader;
 import com.express.domain.model.user.Email;
 import com.express.domain.model.user.SecurityCustomUser;
 import com.express.domain.model.user.User;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -61,15 +65,17 @@ public class UserAuthService implements UserAuthUseCase, UserDetailsService {
     }
 
     @Override
-    public String reissueAccessToken(String refreshToken) {
+    public ReissueAccessTokenResponse reissueAccessToken(String refreshToken) {
         if (securityProcessor.validateToken(refreshToken)){
             Authentication authentication = securityProcessor.getAuthentication(refreshToken);
             String getRefreshTokenInCache = String.valueOf(cacheProcessor.getValue(authentication.getName()));
             //레디스에 저장된 토큰값과 일치하는지 검증
             if (!isEmpty(getRefreshTokenInCache) && refreshToken.equals(getRefreshTokenInCache)){
                 //일치하면 엑세스토큰 재발급
-                return securityProcessor.createAccessToken(authentication);
+                String accessToken = securityProcessor.createAccessToken(authentication);
+
                 //securityProcessor.createAccessToken()
+                return ReissueAccessTokenResponse.reissueAccessTokenResponse(accessToken);
             }else{
                 throw new RuntimeException("Refresh token mismatch");
             }
@@ -80,8 +86,12 @@ public class UserAuthService implements UserAuthUseCase, UserDetailsService {
     }
 
     @Override
-    public String logOut() {
-        return "";
+    public void logOut(UserDetails userDetails, HttpServletRequest request) {
+        if(isEmpty(cacheProcessor.getValue(userDetails.getUsername()))){
+            throw new RuntimeException("User not found");
+        }else{
+            cacheProcessor.deleteValue(userDetails.getUsername());
+        }
     }
 
     @Override
@@ -100,7 +110,7 @@ public class UserAuthService implements UserAuthUseCase, UserDetailsService {
     }
 
     @Override
-    public boolean certifiedEmail(CertifiedEmailCommand certifiedEmailRequest) {
+    public UserCertificatedResponse certifiedEmail(CertifiedEmailCommand certifiedEmailRequest) {
         /*
         레디스에서 Email값으로 인증 번호 가지고 와서 요청으로 받은 코드와 비교
         다르면 false
@@ -108,7 +118,9 @@ public class UserAuthService implements UserAuthUseCase, UserDetailsService {
          */
         Object value = cacheProcessor.getValue(certifiedEmailRequest.getEmail().getEmailText());
         log.info("Certified code in redis : {}", value);
-        return certifiedEmailRequest.compareCertifiedCode(value);
+        boolean certifiedStatus = certifiedEmailRequest.compareCertifiedCode(value);
+
+        return UserCertificatedResponse.of(certifiedStatus);
     }
 
     private int randomAuthorizationCode() {

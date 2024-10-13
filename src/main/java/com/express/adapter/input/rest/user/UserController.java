@@ -1,17 +1,14 @@
 package com.express.adapter.input.rest.user;
 
-import com.express.adapter.input.rest.responseTemplate.CustomResponse;
-import com.express.adapter.input.rest.user.response.ReadUserResponse;
-import com.express.application.port.input.user.UserProcessorUseCase;
-import com.express.application.port.input.user.UserReadUseCase;
+import com.express.adapter.common.WebAdapter;
+import com.express.adapter.input.rest.responseTemplate.ResultDataResponse;
 import com.express.adapter.input.rest.user.request.JoinUserRequest;
 import com.express.adapter.input.rest.user.request.ModifyUserRequest;
 import com.express.adapter.input.rest.user.request.WithdrawalUserRequest;
-import com.express.adapter.common.WebAdapter;
-import com.express.domain.model.user.User;
+import com.express.adapter.input.rest.user.response.ReadUserResponse;
+import com.express.application.port.input.user.UserProcessorUseCase;
+import com.express.application.port.input.user.UserReadUseCase;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @WebAdapter
@@ -23,27 +20,20 @@ public class UserController {
     private final UserProcessorUseCase userProcessorUseCase;
 
     @PostMapping(value = "/join")
-    public ResponseEntity<CustomResponse> saveUser(@RequestBody JoinUserRequest joinUserRequest){
+    public void saveUser(@RequestBody JoinUserRequest joinUserRequest){
         //validate (유효한 전화번호, 이메일 형식, 이메일 인증 여부 )
         userProcessorUseCase.joinUser(joinUserRequest.toJoinUserCommand());
-        //가입
-        return ResponseEntity.status(HttpStatus.OK).build();
     }
     /**
      *
      */
     @GetMapping(value = "/info/{userId}")
-    public CustomResponse<ReadUserResponse> readUser(@PathVariable Long userId){
+    public ReadUserResponse readUser(@PathVariable("userId") Long userId){
         ReadUserResponse userResponse = userReadUseCase.findById(userId);
-        return new CustomResponse<>(HttpStatus.OK.value(),"ResponseCode",userResponse);
+        return userResponse;
         //유저 아이디 검증
     }
 
-
-    @PostMapping("/check")
-    public CustomResponse<String> check(@RequestBody String ee){
-        return new CustomResponse<>(HttpStatus.OK.value(),"ResponseCode",ee);
-    }
     @DeleteMapping(value = "/withdrawal")
     public void deleteUser(@RequestBody WithdrawalUserRequest withdrawalUserRequest){
         //로그인 된 유저로 변경

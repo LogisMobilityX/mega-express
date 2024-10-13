@@ -1,17 +1,18 @@
 package com.express.adapter.input.rest.user;
 
-import com.express.adapter.input.rest.responseTemplate.CustomResponse;
-import com.express.adapter.input.rest.user.response.AuthenticatedResponse;
-import com.express.application.port.input.user.UserAuthUseCase;
+import com.express.adapter.common.WebAdapter;
 import com.express.adapter.input.rest.user.request.CertifiedEmailRequest;
 import com.express.adapter.input.rest.user.request.LoginUserRequest;
-import com.express.adapter.common.WebAdapter;
+import com.express.adapter.input.rest.user.request.SendEmailRequest;
+import com.express.adapter.input.rest.user.response.AuthenticatedResponse;
+import com.express.adapter.input.rest.user.response.ReissueAccessTokenResponse;
+import com.express.adapter.input.rest.user.response.UserCertificatedResponse;
+import com.express.application.port.input.user.UserAuthUseCase;
 import com.express.domain.model.user.Email;
 import jakarta.servlet.http.HttpServletRequest;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 @WebAdapter
@@ -27,21 +28,19 @@ public class UserAuthController {
         return login;
     }
     @GetMapping(path = "/reissue")
-    public CustomResponse<String> reissueAccessToken(HttpServletRequest request){
+    public ReissueAccessTokenResponse reissueAccessToken(HttpServletRequest request){
         String bearerToken = request.getHeader("Authorization-refresh");
         String refreshToken = "";
 
         if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
             refreshToken = bearerToken.substring(7);
         }
-
-        String reissueAccessToken  = userAuthUseCase.reissueAccessToken(refreshToken);
-        return new CustomResponse<>(HttpStatus.OK.value(),HttpStatus.OK.getReasonPhrase(),reissueAccessToken);
+        return userAuthUseCase.reissueAccessToken(refreshToken);
     }
 
-    @PostMapping(path = "/logout")
-    public void logoutUser(){
-        //validate
+    @DeleteMapping(path = "/logout")
+    public void logoutUser(@AuthenticationPrincipal UserDetails userDetails, HttpServletRequest request){
+        userAuthUseCase.logOut(userDetails,request);
     }
     @PostMapping(path = "/add")
     public void addAuthorization(){}
@@ -54,9 +53,8 @@ public class UserAuthController {
      * 이메일로 랜덤코드 발급 -> 인증하기
      */
     @PostMapping(value = "/certifiedEmail/send")
-    public ResponseEntity<Void> sendCertifiedEmail(@RequestBody String email){
-        userAuthUseCase.sendCertifiedEmail(Email.from(email));
-        return ResponseEntity.noContent().build();
+    public void sendCertifiedEmail(@RequestBody SendEmailRequest request) {
+        userAuthUseCase.sendCertifiedEmail(Email.from(request.getEmail()));
     }
 
     /*
@@ -69,10 +67,8 @@ public class UserAuthController {
      * false로 넘어오면 회원가입 불가
      */
     @PostMapping("/certifiedEmail")
-    public boolean certifiedEmail(@RequestBody CertifiedEmailRequest certifiedEmailRequest){
-
+    public UserCertificatedResponse certifiedEmail(@RequestBody CertifiedEmailRequest certifiedEmailRequest){
         return userAuthUseCase.certifiedEmail(certifiedEmailRequest.toCertifiedEmailCommand());
-
     }
 
 }

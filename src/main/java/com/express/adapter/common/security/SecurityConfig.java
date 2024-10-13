@@ -32,6 +32,8 @@ public class SecurityConfig {
                                 .requestMatchers("/v1/api/user/auth/login").permitAll()
                                 .requestMatchers("/v1/api/user/auth/reissue").permitAll()
                                 .requestMatchers("/v1/api/user/join/").permitAll()
+                                .requestMatchers("/v1/api/user/auth/certifiedEmail/send").permitAll()
+                                .requestMatchers("/v1/api/user/auth/certifiedEmail").permitAll()
                                 .requestMatchers("/error").permitAll()
                                 .anyRequest()
                                 .authenticated()
