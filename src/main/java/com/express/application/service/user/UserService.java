@@ -4,6 +4,7 @@ package com.express.application.service.user;
 import com.express.adapter.common.UseCase;
 import com.express.adapter.input.rest.user.response.ReadUserResponse;
 import com.express.application.port.input.user.*;
+import com.express.application.port.output.security.SecurityProcessor;
 import com.express.application.port.output.user.UserProcessor;
 import com.express.application.port.output.user.UserReader;
 import com.express.domain.model.user.*;
@@ -30,6 +31,7 @@ public class UserService implements UserProcessorUseCase,
     private final UserProcessor userProcessor;
     private final UserReader userReader;
     private final PasswordEncoder passwordEncoder;
+    private final SecurityProcessor securityProcessor;
 
 
     @Override
@@ -55,8 +57,8 @@ public class UserService implements UserProcessorUseCase,
 
     @Override
     @Transactional
-    public void modifyUserInfo(Long userId, ModifyUserCommand modifyUserCommand) {
-        //
+    public void modifyUserInfo(ModifyUserCommand modifyUserCommand) {
+        Long userId = securityProcessor.currentUserId();
         //user 객체로 변환
         User user = User.builder()
                 .userId(UserId.from(0L))
@@ -70,7 +72,8 @@ public class UserService implements UserProcessorUseCase,
 
     @Override
     @Transactional
-    public boolean withdrawalUser(Long userId, WithdrawalUserCommand withdrawalUserCommand) {
+    public boolean withdrawalUser(WithdrawalUserCommand withdrawalUserCommand) {
+        Long userId = securityProcessor.currentUserId();
         //id로 유저 정보 조회
         User user = userReader.UserInfoById(userId);
         //패스워드 검증

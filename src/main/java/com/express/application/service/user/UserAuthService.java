@@ -44,6 +44,7 @@ public class UserAuthService implements UserAuthUseCase, UserDetailsService {
 
     @Override
     public AuthenticatedResponse login(LoginUserCommand loginUserCommand) {
+        //이메일 검증 1차
         TokenInfo tokenInfo = securityProcessor.setAuthentication(
                 loginUserCommand.getEmail().getEmailText(),
                 loginUserCommand.getPassword().getPasswordText());

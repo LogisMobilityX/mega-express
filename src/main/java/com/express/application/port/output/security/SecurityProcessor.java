@@ -20,4 +20,6 @@ public interface SecurityProcessor {
     String resolveToken(HttpServletRequest request);
 
     TokenInfo setAuthentication(String email, String password);
+
+    Long currentUserId();
 }

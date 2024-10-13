@@ -2,6 +2,7 @@ package com.express.application.service.user;
 
 import com.express.adapter.input.rest.user.request.JoinUserRequest;
 import com.express.adapter.input.rest.user.response.ReadUserResponse;
+import com.express.adapter.input.rest.user.response.UserCertificatedResponse;
 import com.express.application.port.input.user.*;
 import com.express.adapter.input.rest.user.request.CertifiedEmailRequest;
 import com.express.domain.model.user.*;
@@ -40,9 +41,9 @@ class UserServiceTest {
         //todo 수정
         Email email = Email.from("rdj10149@gmail.com");
         CertifiedEmailCommand certifiedEmailCommand = new CertifiedEmailCommand(email,"251849");
-        boolean certifiedEmail = userAuthUseCase.certifiedEmail(certifiedEmailCommand);
-        MatcherAssert.assertThat(certifiedEmail,is(equalTo(true)));
-        logger.info("Certified email returned: " + certifiedEmail);
+        UserCertificatedResponse userCertificatedResponse = userAuthUseCase.certifiedEmail(certifiedEmailCommand);
+        MatcherAssert.assertThat(userCertificatedResponse.isCertificationStatus(),is(equalTo(true)));
+        logger.info("Certified email returned: " + userCertificatedResponse.isCertificationStatus());
 
     }
     @Test
@@ -68,7 +69,7 @@ class UserServiceTest {
                 .phoneNumber(PhoneNumber.from("010-1111-1111"))
                 .email(Email.from("rdj10149@naver.com"))
                 .build();
-        userProcessorUseCase.modifyUserInfo(6L,modifyUserCommand);
+        userProcessorUseCase.modifyUserInfo(modifyUserCommand);
     }
 
     @Test
@@ -78,7 +79,7 @@ class UserServiceTest {
                 .password(Password.from("Eassword001!"))
                 .build();
 
-        userProcessorUseCase.withdrawalUser(6L,withdrawalUserCommand);
+        userProcessorUseCase.withdrawalUser(withdrawalUserCommand);
     }
     @Test
     @DisplayName(value = "유저 회원 정보 조회")

@@ -9,6 +9,8 @@ import com.express.adapter.input.rest.user.response.ReadUserResponse;
 import com.express.application.port.input.user.UserProcessorUseCase;
 import com.express.application.port.input.user.UserReadUseCase;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 @WebAdapter
@@ -29,6 +31,8 @@ public class UserController {
      */
     @GetMapping(value = "/info/{userId}")
     public ReadUserResponse readUser(@PathVariable("userId") Long userId){
+        SecurityContext context = SecurityContextHolder.getContext();
+        System.out.println(context);
         ReadUserResponse userResponse = userReadUseCase.findById(userId);
         return userResponse;
         //유저 아이디 검증
@@ -36,19 +40,14 @@ public class UserController {
 
     @DeleteMapping(value = "/withdrawal")
     public void deleteUser(@RequestBody WithdrawalUserRequest withdrawalUserRequest){
-        //로그인 된 유저로 변경
-        long id = 1L;
         //로그인 된 유저 아이디를 가지고 오고
-        userProcessorUseCase.withdrawalUser(id,withdrawalUserRequest.toWithdrawalUserCommand());
+        userProcessorUseCase.withdrawalUser(withdrawalUserRequest.toWithdrawalUserCommand());
     }
 
     @PutMapping(value = "/modify")
     public void updateUser(@RequestBody ModifyUserRequest modifyUserRequest){
-        //로그인 된 유저로 변경
-        //로그인 된 유저 아이디를 가지고 오고
-        long id = 1L;
         //수정Form을 받아서 수정
-        userProcessorUseCase.modifyUserInfo(id,modifyUserRequest.toModifyUserCommand());
+        userProcessorUseCase.modifyUserInfo(modifyUserRequest.toModifyUserCommand());
     }
 
 

@@ -7,9 +7,9 @@ public interface UserProcessorUseCase {
     //user 생성
     void joinUser(JoinUserCommand joinUserRequest);
     //user 정보 수정
-    void modifyUserInfo(Long userId, ModifyUserCommand userUpdateDto);
+    void modifyUserInfo(ModifyUserCommand userUpdateDto);
     //user 삭제
-    boolean withdrawalUser(Long userId,WithdrawalUserCommand withdrawalUserCommand);
+    boolean withdrawalUser(WithdrawalUserCommand withdrawalUserCommand);
 
 }
 

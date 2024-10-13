@@ -4,6 +4,7 @@ import com.express.adapter.common.WebAdapter;
 import com.express.adapter.common.security.TokenInfo;
 import com.express.application.port.output.security.SecurityProcessor;
 import com.express.application.port.output.user.UserReader;
+import com.express.domain.model.user.SecurityCustomUser;
 import io.jsonwebtoken.*;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.Getter;
@@ -16,6 +17,8 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.util.StringUtils;
@@ -24,6 +27,7 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -68,9 +72,12 @@ public class SecurityAdapter implements SecurityProcessor{
                 .stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(","));
+        SecurityCustomUser userDetails = (SecurityCustomUser) authentication.getPrincipal();
+
         return Jwts.builder()
                 .setClaims(claims)
                 .claim("auth" , authoritiesToString)
+                .claim("userId", userDetails.getUser().getUserId().Id())
                 .setIssuedAt(now)
                 .setExpiration(expireDate)
                 .signWith(SignatureAlgorithm.HS256, secretKey)
@@ -90,10 +97,13 @@ public class SecurityAdapter implements SecurityProcessor{
                 .stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(","));
+        SecurityCustomUser userDetails = (SecurityCustomUser) authentication.getPrincipal();
+
         String refreshToken = Jwts.builder()
                 .setClaims(claims)
                 .setIssuedAt(now)
                 .claim("auth" , authoritiesToString)
+                .claim("userId", userDetails.getUser().getUserId().Id())
                 .setExpiration(expireDate)
                 .signWith(SignatureAlgorithm.HS256, secretKey)
                 .compact();
@@ -145,7 +155,9 @@ public class SecurityAdapter implements SecurityProcessor{
         // UserDetails 객체를 만들어서 Authentication return
         // UserDetails: interface, User: UserDetails를 구현한 class
         UserDetails principal = new User(claims.getSubject(), "", authorities);
-        return new UsernamePasswordAuthenticationToken(principal, "", authorities);
+
+
+        return new UsernamePasswordAuthenticationToken(principal, claims.get("userId").toString(), authorities);
     }
 
     private Claims parseClaims(String accessToken) {
@@ -187,6 +199,12 @@ public class SecurityAdapter implements SecurityProcessor{
                 .authenticate(authenticationToken);
 
         return generateToken(authentication);
+    }
+
+    @Override
+    public Long currentUserId() {
+        Long userId = (Long) SecurityContextHolder.getContext().getAuthentication().getCredentials();
+        return userId;
     }
 
 
