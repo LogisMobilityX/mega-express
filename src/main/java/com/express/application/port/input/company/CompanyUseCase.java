@@ -6,10 +6,8 @@ public interface CompanyUseCase {
 
     Company readCompany(ReadCompanyQuery query);
 
-    Company registerCompany(RegisterCompanyCommand command);
+    Company registerCompany(RegisterCompanyCommand command, Long userId);
 
-    boolean modifyCompany(ModifyCompanyCommand command);
-
-    boolean modifyRejectedCompany(ModifyCompanyCommand command);
+    Company modifyCompany(ModifyCompanyCommand command);
 
 }

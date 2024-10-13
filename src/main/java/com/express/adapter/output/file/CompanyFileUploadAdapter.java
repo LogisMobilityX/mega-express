@@ -5,8 +5,10 @@ import com.express.adapter.output.file.s3.S3Uploader;
 import com.express.application.port.output.file.FileUploader;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
+@Component
 @RequiredArgsConstructor
 public class CompanyFileUploadAdapter implements FileUploader {
 

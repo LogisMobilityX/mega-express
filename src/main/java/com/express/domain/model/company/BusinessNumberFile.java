@@ -5,12 +5,20 @@ import org.springframework.web.multipart.MultipartFile;
 
 @Getter
 public class BusinessNumberFile {
-    private final MultipartFile file;
+    private MultipartFile file;
 
     private String filePath;
 
     public static BusinessNumberFile from(MultipartFile file){
         return new BusinessNumberFile(file);
+    }
+
+    public static BusinessNumberFile from(String filePath){
+        return new BusinessNumberFile(filePath);
+    }
+
+    private BusinessNumberFile(String filePath) {
+        this.filePath = filePath;
     }
 
     private BusinessNumberFile(MultipartFile file) {

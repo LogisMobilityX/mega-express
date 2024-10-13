@@ -8,4 +8,6 @@ public interface CompanyProcessor {
     void modify(Company company);
 
     void register(Company company);
+
+    void updateCompanyInfo(Company company);
 }

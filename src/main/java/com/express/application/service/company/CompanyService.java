@@ -1,5 +1,6 @@
 package com.express.application.service.company;
 
+import com.express.application.exception.company.CompanyNotFoundException;
 import com.express.application.port.input.company.CompanyUseCase;
 import com.express.application.port.input.company.ModifyCompanyCommand;
 import com.express.application.port.input.company.ReadCompanyQuery;
@@ -26,17 +27,19 @@ public class CompanyService implements CompanyUseCase {
 
     @Override
     public Company readCompany(ReadCompanyQuery query) {
-        return null;
+        return companyReader.readCompany(query)
+            .orElseThrow(CompanyNotFoundException::new);
     }
 
+    @Transactional
     @Override
-    public Company registerCompany(RegisterCompanyCommand command) {
+    public Company registerCompany(RegisterCompanyCommand command, Long userId) {
 
         companyReader.readByBusinessNumber(command.businessNumber())
-            .orElseThrow(() -> new RuntimeException("Erro"));
+            .orElseThrow(CompanyNotFoundException::new);
 
-        String businessNumberFilePath = fileUploader.upload(command.getBusinessNumberFile().getFile());
-        command.getBusinessNumberFile().uploadComplete(businessNumberFilePath);
+        String businessNumberFilePath = fileUploader.upload(command.businessNumberFile().getFile());
+        command.businessNumberFile().uploadComplete(businessNumberFilePath);
 
         Company newCompany = Company.register(command);
         companyProcessor.register(newCompany);
@@ -48,12 +51,20 @@ public class CompanyService implements CompanyUseCase {
     }
 
     @Override
-    public boolean modifyCompany(ModifyCompanyCommand command) {
-        return false;
+    public Company modifyCompany(ModifyCompanyCommand command) {
+        Company company = companyReader.readByCompanyId(command.companyId())
+            .orElseThrow(CompanyNotFoundException::new);
+
+        String businessNumberFilePath = fileUploader.upload(command.businessNumberFile().getFile());
+        command.businessNumberFile().uploadComplete(businessNumberFilePath);
+
+        Company updatedCompany = company.update(command);
+        companyProcessor.updateCompanyInfo(updatedCompany);
+
+        messagePublisher.publish(updatedCompany.listEvents());
+        updatedCompany.clearEvents();
+
+        return updatedCompany;
     }
 
-    @Override
-    public boolean modifyRejectedCompany(ModifyCompanyCommand command) {
-        return false;
-    }
 }

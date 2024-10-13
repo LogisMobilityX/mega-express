@@ -1,22 +1,27 @@
 package com.express.application.service.user;
 
 
-import com.express.adapter.common.UseCase;
-import com.express.adapter.input.rest.user.response.ReadUserResponse;
-import com.express.application.port.input.user.*;
-import com.express.application.port.output.email.EmailSender;
-import com.express.application.port.output.inmemory.redis.CacheProcessor;
-import com.express.application.port.output.user.UserAuthProcessor;
+import com.express.application.port.input.user.UserAuthUseCase;
+import com.express.application.port.input.user.UserProcessorUseCase;
+import com.express.application.port.input.user.UserReadUseCase;
+import com.express.application.port.input.user.request.CertifiedEmailRequest;
+import com.express.application.port.input.user.request.JoinUserRequest;
+import com.express.application.port.input.user.request.ModifyUserRequest;
+import com.express.application.port.input.user.response.ReadUserResponse;
+import com.express.application.port.output.inmemory.redis.RedisProcessor;
+import com.express.application.port.output.messaging.MessagePublisher;
 import com.express.application.port.output.user.UserProcessor;
 import com.express.application.port.output.user.UserReader;
-import com.express.application.service.messaging.MessagePublisher;
-import com.express.domain.model.user.*;
-import jakarta.transaction.Transactional;
+import com.express.infrasturcture.common.UseCase;
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 
 import java.util.Map;
+import java.util.Optional;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
@@ -33,84 +38,113 @@ import java.util.concurrent.TimeUnit;
 @UseCase
 @RequiredArgsConstructor
 public class UserService implements UserProcessorUseCase,
-        UserReadUseCase{
-    //유저 관련
+                                    UserReadUseCase,
+                                    UserAuthUseCase {
     private final UserProcessor userProcessor;
     private final UserReader userReader;
-    private final PasswordEncoder passwordEncoder;
+    private final RedisProcessor redisProcessor;
     private final MessagePublisher messagePublisher;
-
+    private final JavaMailSender javaMailSender;
 
     @Override
-    @Transactional
-    public void joinUser(JoinUserCommand joinUserRequest) {
-        //user 객체로 변환
-        User user = User.builder()
-                .userId(UserId.from(0L))
-                .email(Email.from(joinUserRequest.getEmail().getEmailText()))
-                .userName(UserName.from(joinUserRequest.getUsername().getUserNameText()))
-                .userGrade(
-                        joinUserRequest.getUserGrade()
-                )
-                .password(
-                        Password.from(
-                                passwordEncoder.encode(joinUserRequest.getPassword().getPasswordText())
-                        )
-                )
-                .phoneNumber(PhoneNumber.from(joinUserRequest.getPhoneNumber().getPhoneNumberText()))
-                .build();
-        userProcessor.saveUser(user);
+    public void createUser(JoinUserRequest joinUserRequest) {
     }
 
     @Override
-    @Transactional
-    public void modifyUserInfo(Long userId, ModifyUserCommand modifyUserCommand) {
-        //
-        //user 객체로 변환
-        User user = User.builder()
-                .userId(UserId.from(0L))
-                .email(Email.from(modifyUserCommand.getEmail().getEmailText()))
-                .userName(UserName.from(modifyUserCommand.getUsername().getUserNameText()))
-                .userGrade(modifyUserCommand.getUserGrade())
-                .phoneNumber(PhoneNumber.from(modifyUserCommand.getPhoneNumber().getPhoneNumberText()))
-                .build();
-        userProcessor.modifyUserInfo(userId, user);
-    }
-
-    @Override
-    @Transactional
-    public boolean withdrawalUser(Long userId, WithdrawalUserCommand withdrawalUserCommand) {
-        //id로 유저 정보 조회
-        User user = userReader.UserInfoById(userId);
-        //패스워드 검증
-        String inputPassword = withdrawalUserCommand.getPassword().getPasswordText();
-        if (user.getPassword().comparePassword(inputPassword)){
-            // 삭제
-            userProcessor.withdrawalUserById(userId);
-            return true;
-        }else{
-            log.info("user withdrawal failed");
-            throw new RuntimeException();
-        }
-    }
-
-
-    @Override
-    public ReadUserResponse findByEmail(String email) {
+    public ModifyUserRequest updateUserInfo(ModifyUserRequest userUpdateDto) {
         return null;
     }
 
     @Override
-    public ReadUserResponse findById(Long userId) {
-        User user = userReader.UserInfoById(userId);
-
-        return ReadUserResponse.builder()
-                .email(user.getEmail().getEmailText())
-                .username(user.getUserName().getUserNameText())
-                .userGrade(user.getUserGrade().name())
-                .phoneNumber(user.getPhoneNumber().getPhoneNumberText())
-                .certifiedEmail(true)
-                .build();
+    public String deleteUserInfo(Long userId) {
+        return "";
     }
+
+    @Override
+    public void sendCertifiedEmail(String email) {
+        MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+        try {
+            //인증번호 생성
+            int authorizationCode =  randomAuthorizationCode();
+            //이메일 전송 전 형태 구성
+            makeEmailForm(mimeMessage,email,getEmailContent(authorizationCode));
+            // 보내기 전 redis에 1차 저장
+            redisProcessor.setValues(email,authorizationCode, TimeUnit.SECONDS ,300);
+            //전송
+            javaMailSender.send(mimeMessage);
+
+            log.info("Succeeded to send Email");
+        } catch (Exception e) {
+            log.info("Failed to send Email");
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public boolean certifiedEmail(CertifiedEmailRequest certifiedEmailRequest) {
+        /*
+        레디스에서 Email값으로 인증 번호 가지고 와서 요청으로 받은 코드와 비교
+        다르면 false
+        같으면 true
+         */
+        Object value = redisProcessor.getValue(certifiedEmailRequest.getEmail());
+        log.info("Certified code in redis : {}", value);
+        return certifiedEmailRequest.compareCertifiedCode(value);
+    }
+
+    @Override
+    public Optional<ReadUserResponse> findByEmail(String email) {
+        return Optional.empty();
+    }
+
+    @Override
+    public Optional<ReadUserResponse> findById(String id) {
+        return Optional.empty();
+    }
+
+    @Override
+    public Map<String, Object> login() {
+        return Map.of();
+    }
+
+    @Override
+    public String logOut() {
+        return "";
+    }
+
+    public void makeEmailForm(MimeMessage mimeMessage,String email, String emailContent) throws MessagingException {
+        MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, false, "UTF-8");
+        mimeMessageHelper.setTo(email); // 메일 수신자
+        mimeMessageHelper.setSubject("로지모 인증 번호"); // 메일 제목
+        mimeMessageHelper.setText(emailContent, true); // 메일 본문 내용, HTML 여부
+    }
+    public String getEmailContent(int authCode){
+        return "<!DOCTYPE html>\n" +
+                "<html>\n" +
+                "<head>\n" +
+                "    <style>\n" +
+                "        .auth-code {\n" +
+                "            font-size: 24px;\n" +
+                "            font-weight: bold;\n" +
+                "            color: #333333;\n" +
+                "        }\n" +
+                "    </style>\n" +
+                "</head>\n" +
+                "<body>\n" +
+                "    <div style=\"text-align: center;\">\n" +
+                "        <h2>로지모 이메일 인증 코드</h2>\n" +
+                "        <p>아래의 인증 코드를 사용하여 이메일 인증을 완료하세요:</p>\n" +
+                "        <p class=\"auth-code\">" + authCode + "</p>\n" +
+                "    </div>\n" +
+                "</body>\n" +
+                "</html>";
+    }
+
+    private int randomAuthorizationCode() {
+        Random random = new Random();
+        int authCode = random.nextInt(900000) + 100000;
+        return authCode;
+    }
+
 
 }

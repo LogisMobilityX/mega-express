@@ -1,7 +1,7 @@
 package com.express.adapter.output.publisher;
 
 
-import com.express.application.service.messaging.MessagePublisher;
+import com.express.application.port.output.messaging.MessagePublisher;
 import com.express.infrasturcture.messaging.Message;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
